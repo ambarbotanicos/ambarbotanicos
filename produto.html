@@ -1,0 +1,185 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Âmbar - Produto</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link
+        href="https://fonts.googleapis.com/css2?family=Roboto+Mono:wght@400;500&family=Roboto:ital,wght@0,300;0,400;0,500;0,600;1,300&display=swap"
+        rel="stylesheet">
+
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="js/tailwind.config.js"></script>
+    <link rel="stylesheet" href="css/style.css" />
+</head>
+
+<body class="bg-background text-foreground font-sans min-h-screen">
+
+    <!-- MENU -->
+    <nav class="border-b border-border bg-background/95 backdrop-blur-md sticky top-0 z-50">
+        <div class="max-w-6xl mx-auto px-6 h-[60px] flex items-center justify-between">
+            <a href="index.html" class="inline-flex items-center text-foreground transition-opacity hover:opacity-90">
+                <img src="img/logo-header.svg" alt="Âmbar" class="h-12 w-auto" />
+            </a>
+            <div class="flex items-center gap-8">
+                <!-- <a href="index.html"
+                    class="text-sm text-muted-foreground hover:text-foreground transition-colors">Home</a>
+                <a href="produtos.html" class="text-sm font-medium text-foreground transition-colors">Produtos</a> -->
+                <!-- <a href="conteudo.html" class="text-sm text-muted-foreground hover:text-foreground transition-colors">Conteúdo</a> -->
+                <a href="https://wa.me/5521967453706?text=Ol%C3%A1%2C%20vim%20pelo%20site%20e%20gostaria%20de%20receber%20mais%20informa%C3%A7%C3%B5es%20sobre%20a%20%C3%82mbar%20Bot%C3%A2nicos."
+                    target="_blank" rel="noopener noreferrer"
+                    class="text-sm font-medium bg-foreground text-primary-foreground px-4 py-2 rounded-sm hover:opacity-80 transition-opacity inline-flex items-center justify-center">
+                    Contato
+                </a>
+            </div>
+        </div>
+    </nav>
+
+    <!-- TOPO DO PRODUTO (dinâmico) -->
+    <section class="max-w-6xl mx-auto px-6 py-14 grid grid-cols-1 md:grid-cols-2 gap-14 items-start">
+        <div class="h-[440px] rounded-sm overflow-hidden bg-secondary">
+            <img id="prod-img" src="" alt="" class="w-full h-full object-cover" loading="lazy" />
+        </div>
+        <div class="pt-2">
+            <h1 id="prod-nome" class="font-sans text-5xl font-semibold leading-none mb-4">Carregando...</h1>
+            <p id="prod-descricao-curta" class="text-sm leading-relaxed mb-8 max-w-sm"></p>
+            <a href="https://wa.me/5521967453706?text=Ol%C3%A1%2C%20gostaria%20de%20solicitar%20um%20or%C3%A7amento%20pelo%20site%20%C3%82mbar%20Bot%C3%A2nicos."
+                target="_blank" rel="noopener noreferrer"
+                class="inline-flex items-center gap-2 text-sm font-medium bg-foreground text-primary-foreground px-5 py-2.5 rounded-sm hover:opacity-80 transition-opacity">Solicitar
+                orçamento <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none"
+                    stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="ml-1">
+                    <path d="M5 12h14" />
+                    <path d="m12 5 7 7-7 7" />
+                </svg></a>
+        </div>
+    </section>
+
+    <!-- FICHA TÉCNICA -->
+    <section class="border-t border-border bg-muted">
+        <div class="max-w-6xl mx-auto px-6 py-14">
+            <p class="text-[10px] font-mono uppercase tracking-widest text-muted-foreground mb-8">Ficha técnica</p>
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-16">
+                <table id="ficha-table" class="w-full text-sm">
+                    <tbody id="ficha-body">
+                        <!-- preenchido dinamicamente -->
+                    </tbody>
+                </table>
+                <div>
+                    <p class="text-[10px] font-mono uppercase tracking-widest text-muted-foreground mb-4">Perfil
+                        sensorial</p>
+                    <p id="prod-descricao" class="text-sm text-muted-foreground leading-relaxed mb-6"></p>
+                    <!-- RADAR CHART (dinâmico) -->
+                    <div id="radar-container" class="flex justify-center"></div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- BLOCO DO PRODUTOR -->
+    <!-- <section class="border-t border-border py-20">
+        <div class="max-w-6xl mx-auto px-6 grid grid-cols-1 md:grid-cols-2 gap-16 items-center">
+            <div class="h-72 rounded-sm overflow-hidden bg-secondary">
+                <img src="https://images.unsplash.com/photo-1626906722163-bd4c03cb3b9b?w=800&h=576&fit=crop"
+                    alt="Produtor no campo" class="w-full h-full object-cover" />
+            </div>
+            <div>
+                <p class="font-sans text-2xl italic leading-relaxed text-foreground font-light mb-6">
+                    "Minha família coleta essa raiz há décadas. O Cerrado nos deu muito — e a gente cuida dele de
+                    volta."
+                </p>
+                <p class="text-[10px] font-mono uppercase tracking-widest text-muted-foreground">João Batista Rezende
+                    &mdash; Goiás, GO</p>
+            </div>
+        </div>
+    </section> -->
+
+    <!-- PARCEIROS -->
+    <section class="border-t border-border py-14" id="section-parceiros">
+        <div class="max-w-6xl mx-auto px-6">
+            <p class="text-[10px] font-mono uppercase tracking-widest text-muted-foreground mb-10">Parceiros</p>
+            <div id="parceiros-container-front" class="flex gap-10 overflow-x-auto">
+                <!-- parceiros dinâmicos inseridos via JS -->
+            </div>
+        </div>
+    </section>
+
+    <!-- QUEM USA -->
+    <!-- <section class="border-t border-border py-14 bg-muted">
+        <div class="max-w-6xl mx-auto px-6">
+            <p class="text-[10px] font-mono uppercase tracking-widest text-muted-foreground mb-8">Quem usa este botânico
+            </p>
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-8 mb-8">
+                <div class="h-56 rounded-sm overflow-hidden bg-secondary">
+                    <img src="https://images.unsplash.com/photo-1414235077428-338989a2e8c0?w=800&h=448&fit=crop"
+                        class="w-full h-full object-cover" alt="Restaurante Raízes" />
+                </div>
+                <div class="flex flex-col justify-center">
+                    <p class="font-sans text-xl font-semibold mb-1">Restaurante Raízes</p>
+                    <p class="text-[10px] font-mono uppercase tracking-widest text-muted-foreground mb-4">São Paulo, SP
+                    </p>
+                    <p class="text-sm text-muted-foreground leading-relaxed">Drinques autorais com canela-de-velho e
+                        cachaça artesanal de Salinas.</p>
+                </div>
+            </div>
+
+            <div class="flex gap-5 overflow-x-auto pb-4">
+                <div class="flex-none w-[272px] bg-card border border-border rounded-sm overflow-hidden">
+                    <div class="h-36 overflow-hidden bg-secondary">
+                        <img src="https://images.unsplash.com/photo-1581510260769-a40cc475d754?w=544&h=288&fit=crop"
+                            class="w-full h-full object-cover" alt="Bar Cerrado" />
+                    </div>
+                    <div class="p-4">
+                        <p class="font-sans text-sm font-semibold mb-0.5">Bar Cerrado</p>
+                        <p class="text-[10px] font-mono uppercase tracking-widest text-muted-foreground mb-2">Brasília,
+                            DF</p>
+                        <p class="text-xs text-muted-foreground leading-relaxed">Xaropes e infusões para coquetelaria
+                            contemporânea com identidade do bioma.</p>
+                    </div>
+                </div>
+                <div class="flex-none w-[272px] bg-card border border-border rounded-sm overflow-hidden">
+                    <div class="h-36 overflow-hidden bg-secondary">
+                        <img src="https://images.unsplash.com/photo-1574966739987-65e38db0f7ce?w=544&h=288&fit=crop"
+                            class="w-full h-full object-cover" alt="Taberna do Cerrado" />
+                    </div>
+                    <div class="p-4">
+                        <p class="font-sans text-sm font-semibold mb-0.5">Taberna do Cerrado</p>
+                        <p class="text-[10px] font-mono uppercase tracking-widest text-muted-foreground mb-2">Goiânia,
+                            GO</p>
+                        <p class="text-xs text-muted-foreground leading-relaxed">Tempero base em pratos regionais do
+                            menu degustação de sete etapas.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    <!-- CTA FINAL -->
+    <footer class="bg-foreground text-primary-foreground py-20">
+        <div class="max-w-6xl mx-auto px-6 flex flex-col md:flex-row items-start md:items-center justify-between gap-8">
+            <div>
+                <p class="text-primary-foreground/60 text-sm leading-relaxed max-w-md">
+                    © 2026 Âmbar Botânicos. Todos os direitos reservados.
+                </p>
+            </div>
+            <div class="flex items-center gap-4">
+                <a href="https://www.instagram.com/ambarbotanicos/" target="_blank" rel="noopener noreferrer"
+                    aria-label="Instagram" class="text-primary-foreground hover:opacity-80 transition-opacity">
+                    <i class="bi bi-instagram text-2xl"></i>
+                </a>
+                <a href="https://wa.me/5521967453706?text=Ol%C3%A1%2C%20vim%20pelo%20site%20e%20gostaria%20de%20receber%20mais%20informa%C3%A7%C3%B5es%20sobre%20a%20%C3%82mbar%20Bot%C3%A2nicos."
+                    target="_blank" rel="noopener noreferrer" aria-label="WhatsApp"
+                    class="text-primary-foreground hover:opacity-80 transition-opacity">
+                    <i class="bi bi-whatsapp text-2xl"></i>
+                </a>
+            </div>
+        </div>
+    </footer>
+
+    <!-- SUPABASE + RADAR + DADOS DO PRODUTO -->
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <script src="js/script.js"></script>
+    <script src="js/produto.js"></script>
+</body>
+
+</html>

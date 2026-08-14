@@ -1,0 +1,292 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Painel Âmbar — Criar Produto</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link
+        href="https://fonts.googleapis.com/css2?family=Roboto+Mono:wght@400;500&family=Roboto:ital,wght@0,300;0,400;0,500;0,600;1,300&display=swap"
+        rel="stylesheet">
+    <link rel="stylesheet" href="css/custom-select.css">
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        background: '#F5F5F5',
+                        foreground: '#2A2520',
+                        border: 'rgba(0, 0, 0, 0.1)',
+                    },
+                    fontFamily: {
+                        sans: ['Roboto', 'sans-serif'],
+                        mono: ['Roboto Mono', 'monospace'],
+                    }
+                }
+            }
+        }
+    </script>
+    <style>
+        body {
+            background-color: #FFFFFF;
+        }
+
+        nav {
+            background-color: #F5F5F5;
+        }
+
+        /* Tema claro para os range sliders */
+        input[type=range] {
+            -webkit-appearance: none;
+            appearance: none;
+            width: 100%;
+            background: transparent;
+        }
+
+        input[type=range]::-webkit-slider-thumb {
+            -webkit-appearance: none;
+            appearance: none;
+            height: 20px;
+            width: 20px;
+            border-radius: 50%;
+            background: #ffffff;
+            border: 2px solid #ccc;
+            cursor: pointer;
+            margin-top: -8px;
+            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+        }
+
+        input[type=range]::-webkit-slider-runnable-track {
+            width: 100%;
+            height: 6px;
+            cursor: pointer;
+            background: #E5E7EB;
+            border-radius: 4px;
+        }
+    </style>
+</head>
+
+<body class="text-foreground font-sans min-h-screen pb-20">
+
+    <nav class="border-b border-border sticky top-0 z-50">
+        <div class="max-w-6xl mx-auto px-6 h-[60px] flex items-center justify-between">
+            <a href="index.html" class="font-sans text-base font-semibold tracking-tight text-foreground">
+                Âmbar
+            </a>
+            <div class="flex items-center gap-8">
+                <a href="index.html" class="text-sm font-medium text-foreground transition-colors">Home</a>
+                <a href="produtos.html"
+                    class="text-sm text-[#7A7165] hover:text-foreground transition-colors">Produtos</a>
+                <a href="conteudo.html"
+                    class="text-sm text-[#7A7165] hover:text-foreground transition-colors">Conteúdo</a>
+                <button onclick="window.deslogar()"
+                    class="text-sm font-medium border border-border px-4 py-2 rounded-sm hover:bg-gray-50 transition-colors">
+                    Sair (Logout)
+                </button>
+            </div>
+        </div>
+    </nav>
+
+    <div class="max-w-4xl mx-auto px-6 py-14">
+        <h1 class="text-2xl font-medium mb-6">Cadastre novos produtos</h1>
+
+        <form id="formProdutoCria">
+
+            <!-- ====== ETAPA 1 ====== -->
+            <div id="step-1" class="bg-[#F5F5F5] p-8 rounded-sm border border-border">
+                <h2 class="font-medium text-lg mb-6 text-foreground">Descricao</h2>
+
+                <div class="mb-4">
+                    <label class="block text-sm font-medium mb-1.5 text-foreground/90">Titulo do produto</label>
+                    <input type="text" id="nome" placeholder="Título" required
+                        class="w-full p-2.5 text-sm border border-[rgba(0,0,0,0.08)] rounded-[3px] bg-[#FAFAFA] focus:outline-none focus:border-gray-300" />
+                </div>
+
+                <div class="mb-6">
+                    <label class="block text-sm font-medium mb-1.5 text-foreground/90">Nome cientifico</label>
+                    <input type="text" id="nome_cientifico" placeholder="Título"
+                        class="w-full p-2.5 text-sm border border-[rgba(0,0,0,0.08)] rounded-[3px] bg-[#FAFAFA] focus:outline-none focus:border-gray-300" />
+                </div>
+
+                <div class="mb-6">
+                    <label class="block text-sm font-medium mb-1.5 text-foreground/90">Descrição curta (Abaixo do
+                        título)</label>
+                    <textarea id="descricao_curta" rows="2" placeholder="Resumo do produto"
+                        class="w-full p-3 text-sm border border-[rgba(0,0,0,0.08)] rounded-[3px] bg-[#FAFAFA] resize-none focus:outline-none focus:border-gray-300"></textarea>
+                </div>
+
+                <!-- Lista de Produtores dynamically added here -->
+                <div id="produtores-container">
+                    <!-- Primeiro item de produtor padrão -->
+                    <div class="produtor-group mb-4 pb-4">
+                        <div class="mb-4">
+                            <label class="block text-sm font-medium mb-1.5 text-foreground/90">Produtor ou
+                                coletor</label>
+                            <div class="custom-select-widget" data-storage-key="amber_produtores"
+                                data-placeholder="Selecione uma opção ou crie uma" data-input-class="produtor-input">
+                            </div>
+                        </div>
+                        <div class="grid grid-cols-2 gap-4">
+                            <div>
+                                <label class="block text-sm font-medium mb-1.5 text-foreground/90">Origem</label>
+                                <div class="custom-select-widget" data-storage-key="amber_origens"
+                                    data-placeholder="Selecione uma opção ou crie uma" data-input-class="origem-input">
+                                </div>
+                            </div>
+                            <div>
+                                <label class="block text-sm font-medium mb-1.5 text-foreground/90">Tipo</label>
+                                <div class="custom-select-widget" data-storage-key="amber_tipos"
+                                    data-placeholder="Selecione uma opção ou crie uma" data-input-class="tipo-input">
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Add Button -->
+                <div class="flex justify-end mb-8 border-b border-[rgba(0,0,0,0.08)] pb-8">
+                    <button type="button" id="btn-add-produtor"
+                        class="px-5 py-2 bg-[#44403C] hover:bg-[#2A2520] transition-colors text-white text-sm font-medium rounded-full flex items-center justify-center gap-2">
+                        Adicionar produtor <span class="text-lg leading-none mb-0.5">+</span>
+                    </button>
+                </div>
+
+                <div class="mb-8 border-b border-[rgba(0,0,0,0.08)] pb-8">
+                    <label class="block text-sm font-medium mb-1.5 text-foreground/90">Dica de uso</label>
+                    <textarea id="dicas_uso" rows="4" placeholder="Descricao"
+                        class="w-full p-3 text-sm border border-[rgba(0,0,0,0.08)] rounded-[3px] bg-[#FAFAFA] resize-none focus:outline-none focus:border-gray-300"></textarea>
+                </div>
+
+                <div class="mb-8 border-b border-[rgba(0,0,0,0.08)] pb-8">
+                    <h2 class="font-medium text-lg mb-4 text-foreground">Parceiros</h2>
+                    <div id="parceiros-container"></div>
+                    <div class="flex justify-start mt-4">
+                        <button type="button" id="btn-add-parceiro"
+                            class="px-4 py-2 bg-gray-200 hover:bg-gray-300 transition-colors text-foreground text-sm font-medium rounded-[3px]">
+                            + Adicionar parceiro
+                        </button>
+                    </div>
+                </div>
+
+                <div class="mb-4">
+                    <label class="block text-sm font-medium mb-1.5 text-foreground/90">Foto do Produto *</label>
+                    <label for="imagemFile" id="dropZone"
+                        class="flex flex-col items-center justify-center gap-3 w-full h-40 border-2 border-dashed border-[rgba(0,0,0,0.2)] rounded-[3px] cursor-pointer hover:border-[rgba(0,0,0,0.4)] transition-colors bg-[#FAFAFA] relative overflow-hidden">
+                        <svg id="uploadIcon" xmlns="http://www.w3.org/2000/svg" width="28" height="28"
+                            viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"
+                            stroke-linecap="round" stroke-linejoin="round" class="text-foreground/60">
+                            <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4" />
+                            <polyline points="17 8 12 3 7 8" />
+                            <line x1="12" x2="12" y1="3" y2="15" />
+                        </svg>
+                        <img id="previewImg" src="" alt="" class="hidden absolute inset-0 w-full h-full object-cover" />
+                        <span id="uploadLabel" class="text-sm text-foreground/60 relative z-10">Clique ou arraste a foto
+                            aqui</span>
+                        <span class="text-[10px] font-mono text-foreground/40 relative z-10">JPG, PNG ou WebP — máx. 5
+                            MB</span>
+                    </label>
+                    <input type="file" id="imagemFile" accept="image/*" class="hidden" />
+                </div>
+
+                <!-- Footer nav -->
+                <div class="flex justify-end gap-3 pt-6">
+                    <button type="button" onclick="window.location.href='admin.html'"
+                        class="px-6 py-2.5 bg-[#FFFFFF] border border-[rgba(0,0,0,0.12)] text-sm font-medium text-foreground rounded-[3px] hover:bg-gray-50 transition-colors">Cancelar</button>
+                    <button type="button" id="btn-proximo"
+                        class="px-6 py-2.5 bg-[#2A2520] text-[#F5F1EA] text-sm font-medium rounded-[3px] hover:opacity-90 transition-opacity">Proximo</button>
+                </div>
+            </div>
+
+            <!-- ====== ETAPA 2 ====== -->
+            <div id="step-2" class="hidden bg-[#F5F5F5] p-8 rounded-sm border border-border">
+                <h2 class="font-medium text-lg mb-6 text-foreground">Perfil sensorial</h2>
+
+                <div class="mb-8 border-b border-[rgba(0,0,0,0.08)] pb-8">
+                    <label class="block text-sm font-medium mb-1.5 text-foreground/90">Perfil sensorial</label>
+                    <textarea id="descricao" rows="4" placeholder="Descricao"
+                        class="w-full p-3 text-sm border border-[rgba(0,0,0,0.08)] rounded-[3px] bg-[#FAFAFA] resize-none focus:outline-none focus:border-gray-300"></textarea>
+                </div>
+
+                <div class="mb-10">
+                    <p class="font-medium text-sm mb-6 text-foreground/90">Perfil Sensorial (0 = ausente · 5 = muito
+                        intenso)</p>
+                    <div id="sliders-container"
+                        class="flex flex-col gap-6 bg-[#FAFAFA] border border-[rgba(0,0,0,0.08)] rounded-[3px] p-6">
+                        <!-- Renderizado via JS -->
+                    </div>
+                </div>
+
+                <div id="msg" class="hidden text-sm font-medium text-center p-3 rounded-sm mb-4"></div>
+
+                <div class="flex justify-end gap-3 pt-6 border-t border-[rgba(0,0,0,0.08)]">
+                    <button type="button" id="btn-voltar"
+                        class="px-6 py-2.5 bg-[#FFFFFF] border border-[rgba(0,0,0,0.12)] text-sm font-medium text-foreground rounded-[3px] hover:bg-gray-50 transition-colors">Cancelar</button>
+                    <button type="submit" id="btnSalvar"
+                        class="flex items-center gap-2 px-6 py-2.5 bg-[#2A2520] text-[#F5F1EA] text-sm font-medium rounded-[3px] hover:opacity-90 transition-opacity">
+                        <span id="btnTexto">Salvar</span>
+                        <svg id="spinner" class="hidden animate-spin" xmlns="http://www.w3.org/2000/svg" width="16"
+                            height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+                            stroke-linecap="round" stroke-linejoin="round">
+                            <path d="M21 12a9 9 0 1 1-6.219-8.56" />
+                        </svg>
+                    </button>
+                </div>
+            </div>
+
+        </form>
+    </div>
+
+    <!-- Template para novos produtores oculto -->
+    <template id="template-produtor">
+        <div class="produtor-group mb-4 pb-4 relative mt-4 pt-4 border-t border-[rgba(0,0,0,0.08)]">
+            <button type="button"
+                class="btn-remover-produtor absolute top-4 right-0 text-red-500 text-xs font-medium hover:underline">Remover</button>
+            <div class="mb-4">
+                <label class="block text-sm font-medium mb-1.5 text-foreground/90">Produtor ou coletor</label>
+                <div class="custom-select-widget" data-storage-key="amber_produtores"
+                    data-placeholder="Selecione uma opção ou crie uma" data-input-class="produtor-input"></div>
+            </div>
+            <div class="grid grid-cols-2 gap-4">
+                <div>
+                    <label class="block text-sm font-medium mb-1.5 text-foreground/90">Origem</label>
+                    <div class="custom-select-widget" data-storage-key="amber_origens"
+                        data-placeholder="Selecione uma opção ou crie uma" data-input-class="origem-input"></div>
+                </div>
+                <div>
+                    <label class="block text-sm font-medium mb-1.5 text-foreground/90">Tipo</label>
+                    <div class="custom-select-widget" data-storage-key="amber_tipos"
+                        data-placeholder="Selecione uma opção ou crie uma" data-input-class="tipo-input"></div>
+                </div>
+            </div>
+        </div>
+    </template>
+
+    <template id="template-parceiro">
+        <div class="parceiro-group flex items-end gap-4 mb-4">
+            <div class="flex-[3]">
+                <label class="block text-[11px] font-mono uppercase tracking-widest text-muted-foreground mb-1.5">Nome
+                    do Parceiro</label>
+                <input type="text"
+                    class="parceiro-nome-input w-full p-2.5 text-sm border border-[rgba(0,0,0,0.08)] rounded-[3px] bg-[#FAFAFA]"
+                    placeholder="Mercado São Paulo">
+            </div>
+            <div class="flex-1">
+                <label
+                    class="block text-[11px] font-mono uppercase tracking-widest text-muted-foreground mb-1.5">Logo</label>
+                <input type="file" class="parceiro-imagem-input w-full" accept="image/*">
+                <input type="hidden" class="parceiro-url-input">
+            </div>
+            <button type="button"
+                class="btn-remover-parceiro px-3 py-2.5 text-red-500 text-sm hover:bg-red-50 rounded-[3px]">X</button>
+        </div>
+    </template>
+
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <script src="js/script.js"></script>
+    <script src="js/admin.js"></script>
+</body>
+
+</html>

@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Âmbar - Produtos</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link
+        href="https://fonts.googleapis.com/css2?family=Roboto+Mono:wght@400;500&family=Roboto:ital,wght@0,300;0,400;0,500;0,600;1,300&display=swap"
+        rel="stylesheet">
+
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="js/tailwind.config.js"></script>
+    <link rel="stylesheet" href="css/style.css" />
+</head>
+
+<body class="bg-background text-foreground font-sans min-h-screen">
+
+    <nav class="border-b border-border bg-background/95 backdrop-blur-md sticky top-0 z-50">
+        <div class="max-w-6xl mx-auto px-6 h-[60px] flex items-center justify-between">
+            <a href="index.html" class="font-sans text-base font-semibold tracking-tight text-foreground">Âmbar</a>
+            <div class="flex items-center gap-8">
+                <a href="index.html"
+                    class="text-sm text-muted-foreground hover:text-foreground transition-colors">Home</a>
+                <a href="produtos.html" class="text-sm font-medium text-foreground transition-colors">Produtos</a>
+                <!-- <a href="conteudo.html" class="text-sm text-muted-foreground hover:text-foreground transition-colors">Conteúdo</a> -->
+                <button onclick="alert('Solicitar contato')"
+                    class="text-sm font-medium bg-foreground text-primary-foreground px-4 py-2 rounded-sm hover:opacity-80 transition-opacity">Contato</button>
+            </div>
+        </div>
+    </nav>
+
+    <div class="max-w-6xl mx-auto px-6 py-14">
+        <div class="mb-10 border-b border-border pb-8">
+            <p class="text-[10px] font-mono uppercase tracking-widest text-muted-foreground mb-2">Catálogo</p>
+            <h1 class="font-sans text-4xl font-semibold">Produtos</h1>
+        </div>
+
+        <!-- Grid Dinâmico (Vindo do Supabase JS) -->
+        <div id="grid-produtos-catalogo" class="grid grid-cols-1 md:grid-cols-3 gap-6">
+            <p class="text-sm text-foreground/50 col-span-3">Conectando ao catálogo Ambar...</p>
+        </div>
+    </div>
+
+    <!-- CTA FINAL -->
+    <footer class="bg-foreground text-primary-foreground py-20">
+        <div class="max-w-6xl mx-auto px-6 flex flex-col md:flex-row items-start md:items-center justify-between gap-8">
+            <div>
+                <p class="text-primary-foreground/60 text-sm leading-relaxed max-w-md">
+                    © 2026 Âmbar Botânicos. Todos os direitos reservados.
+                </p>
+            </div>
+            <div class="flex items-center gap-4">
+                <a href="https://www.instagram.com/ambarbotanicos/" target="_blank" rel="noopener noreferrer"
+                    aria-label="Instagram" class="text-primary-foreground hover:opacity-80 transition-opacity">
+                    <i class="bi bi-instagram text-2xl"></i>
+                </a>
+                <a href="https://wa.me/5521967453706?text=Ol%C3%A1%2C%20vim%20pelo%20site%20e%20gostaria%20de%20receber%20mais%20informa%C3%A7%C3%B5es%20sobre%20a%20%C3%82mbar%20Bot%C3%A2nicos."
+                    target="_blank" rel="noopener noreferrer" aria-label="WhatsApp"
+                    class="text-primary-foreground hover:opacity-80 transition-opacity">
+                    <i class="bi bi-whatsapp text-2xl"></i>
+                </a>
+            </div>
+        </div>
+    </footer>
+
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <script src="js/script.js"></script>
+</body>
+
+</html>

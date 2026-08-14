@@ -1,0 +1,165 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Âmbar - Conteúdo</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link
+        href="https://fonts.googleapis.com/css2?family=Roboto+Mono:wght@400;500&family=Roboto:ital,wght@0,300;0,400;0,500;0,600;1,300&display=swap"
+        rel="stylesheet">
+
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        background: '#F5F1EA',
+                        foreground: '#2A2520',
+                        card: '#EDE9DF',
+                        secondary: '#DDD9CE',
+                        muted: '#EDE9DF',
+                        'muted-foreground': '#7A7165',
+                        border: 'rgba(42, 37, 32, 0.14)',
+                        primary: '#2A2520',
+                        'primary-foreground': '#F5F1EA',
+                    }
+                }
+            }
+        }
+    </script>
+</head>
+
+<body class="bg-background text-foreground font-sans min-h-screen">
+
+    <nav class="border-b border-border bg-background/95 backdrop-blur-md sticky top-0 z-50">
+        <div class="max-w-6xl mx-auto px-6 h-[60px] flex items-center justify-between">
+            <a href="index.html" class="font-sans text-base font-semibold tracking-tight text-foreground">Âmbar</a>
+            <div class="flex items-center gap-8">
+                <a href="index.html"
+                    class="text-sm text-muted-foreground hover:text-foreground transition-colors">Home</a>
+                <a href="produtos.html"
+                    class="text-sm text-muted-foreground hover:text-foreground transition-colors">Produtos</a>
+                <a href="conteudo.html" class="text-sm font-medium text-foreground transition-colors">Conteúdo</a>
+                <button onclick="alert('Solicitar contato')"
+                    class="text-sm font-medium bg-foreground text-primary-foreground px-4 py-2 rounded-sm hover:opacity-80 transition-opacity">Contato</button>
+            </div>
+        </div>
+    </nav>
+
+    <div class="max-w-6xl mx-auto px-6 py-14">
+        <div class="mb-10 pb-8 border-b border-border">
+            <p class="text-[10px] font-mono uppercase tracking-widest text-muted-foreground mb-2">Editorial</p>
+            <h1 class="font-sans text-4xl font-semibold">Conteúdo</h1>
+        </div>
+
+        <!-- Filtros estáticos fictícios -->
+        <div class="mb-10 flex flex-wrap gap-2">
+            <span
+                class="text-[10px] font-mono uppercase tracking-widest px-3 py-1.5 rounded-full bg-foreground text-primary-foreground">Todos</span>
+            <span
+                class="text-[10px] font-mono uppercase tracking-widest px-3 py-1.5 rounded-full bg-secondary text-muted-foreground hover:bg-foreground/10 cursor-pointer">Produtores</span>
+            <span
+                class="text-[10px] font-mono uppercase tracking-widest px-3 py-1.5 rounded-full bg-secondary text-muted-foreground hover:bg-foreground/10 cursor-pointer">Coquetelaria</span>
+        </div>
+
+        <!-- Post principal estático -->
+        <a href="#"
+            class="grid grid-cols-1 md:grid-cols-2 gap-10 mb-16 pb-16 border-b border-border cursor-pointer group">
+            <div class="h-72 rounded-sm overflow-hidden bg-secondary">
+                <img src="https://images.unsplash.com/photo-1665864960344-1eb43c639b20?w=800&h=576&fit=crop"
+                    class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" />
+            </div>
+            <div class="flex flex-col justify-center">
+                <div class="flex flex-wrap gap-2 mb-3">
+                    <span
+                        class="text-[10px] font-mono uppercase tracking-widest bg-secondary text-muted-foreground px-2.5 py-1 rounded-full">Produtores</span>
+                    <span
+                        class="text-[10px] font-mono uppercase tracking-widest bg-secondary text-muted-foreground px-2.5 py-1 rounded-full">Cerrado</span>
+                </div>
+                <p class="font-sans text-2xl font-semibold leading-snug group-hover:underline mb-3">A história por trás
+                    da canela-de-velho do Cerrado</p>
+                <p class="text-sm text-muted-foreground leading-relaxed">O Cerrado guarda segredos que a indústria
+                    alimentícia ainda está aprendendo a ouvir. A história da família que há décadas coleta a raiz que
+                    virou febre na coquetelaria paulistana.</p>
+            </div>
+        </a>
+
+        <!-- Grade dos demais -->
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+
+            <a href="#"
+                class="cursor-pointer group bg-card border border-border rounded-sm overflow-hidden hover:shadow-md transition-shadow duration-200">
+                <div class="h-44 overflow-hidden bg-secondary">
+                    <img src="https://images.unsplash.com/photo-1514362545857-3bc16c4c7d1b?w=800&h=352&fit=crop"
+                        class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" />
+                </div>
+                <div class="p-4">
+                    <div class="flex flex-wrap gap-2 mb-2.5">
+                        <span
+                            class="text-[10px] font-mono uppercase tracking-widest bg-secondary text-muted-foreground px-2.5 py-1 rounded-full">Bares</span>
+                    </div>
+                    <p class="font-sans text-sm font-medium group-hover:underline leading-snug">Como o Bar Cerrado criou
+                        um menu inteiro com botânicos brasileiros</p>
+                </div>
+            </a>
+
+            <a href="#"
+                class="cursor-pointer group bg-card border border-border rounded-sm overflow-hidden hover:shadow-md transition-shadow duration-200">
+                <div class="h-44 overflow-hidden bg-secondary">
+                    <img src="https://images.unsplash.com/photo-1530507629858-e4977d30e9e0?w=800&h=352&fit=crop"
+                        class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" />
+                </div>
+                <div class="p-4">
+                    <div class="flex flex-wrap gap-2 mb-2.5">
+                        <span
+                            class="text-[10px] font-mono uppercase tracking-widest bg-secondary text-muted-foreground px-2.5 py-1 rounded-full">Sustentabilidade</span>
+                    </div>
+                    <p class="font-sans text-sm font-medium group-hover:underline leading-snug">Extrativismo
+                        responsável: o que isso significa na prática</p>
+                </div>
+            </a>
+
+            <a href="#"
+                class="cursor-pointer group bg-card border border-border rounded-sm overflow-hidden hover:shadow-md transition-shadow duration-200">
+                <div class="h-44 overflow-hidden bg-secondary">
+                    <img src="https://images.unsplash.com/photo-1609345265499-2133bbeb6ce5?w=800&h=352&fit=crop"
+                        class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" />
+                </div>
+                <div class="p-4">
+                    <div class="flex flex-wrap gap-2 mb-2.5">
+                        <span
+                            class="text-[10px] font-mono uppercase tracking-widest bg-secondary text-muted-foreground px-2.5 py-1 rounded-full">Restaurantes</span>
+                    </div>
+                    <p class="font-sans text-sm font-medium group-hover:underline leading-snug">5 formas de usar
+                        pimenta-rosa no cardápio de bar</p>
+                </div>
+            </a>
+
+        </div>
+    </div>
+
+    <footer class="border-t border-border bg-muted mt-24">
+        <div class="max-w-6xl mx-auto px-6 py-14 grid grid-cols-1 md:grid-cols-3 gap-12">
+            <div>
+                <p class="font-sans text-base font-semibold mb-3">Âmbar</p>
+                <p class="text-sm text-muted-foreground leading-relaxed max-w-xs">Distribuidora brasileira de
+                    botânicos...</p>
+            </div>
+            <div>
+                <p class="text-[10px] font-mono uppercase tracking-widest text-muted-foreground mb-4">Navegação</p>
+                <a href="index.html"
+                    class="block text-sm text-muted-foreground hover:text-foreground mb-2.5 transition-colors">Home</a>
+                <a href="produtos.html"
+                    class="block text-sm text-muted-foreground hover:text-foreground mb-2.5 transition-colors">Produtos</a>
+                <a href="conteudo.html"
+                    class="block text-sm text-muted-foreground hover:text-foreground mb-2.5 transition-colors">Conteúdo</a>
+            </div>
+        </div>
+    </footer>
+</body>
+
+</html>

@@ -1,0 +1,114 @@
+/* Notion-like custom select styles */
+.custom-select-wrapper {
+    position: relative;
+    width: 100%;
+}
+
+.custom-select-trigger {
+    display: flex;
+    align-items: center;
+    min-height: 42px;
+    padding: 4px 8px;
+    background: #FAFAFA;
+    border: 1px solid rgba(0, 0, 0, 0.08);
+    border-radius: 3px;
+    cursor: text;
+    flex-wrap: wrap;
+    gap: 4px;
+}
+
+.custom-select-dropdown {
+    position: absolute;
+    top: calc(100% + 4px);
+    left: 0;
+    width: 100%;
+    background: #FFFFFF;
+    border: 1px solid rgba(0, 0, 0, 0.1);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+    border-radius: 4px;
+    z-index: 100;
+    max-height: 300px;
+    display: none;
+    flex-direction: column;
+}
+
+.custom-select-dropdown.open {
+    display: flex;
+}
+
+.custom-select-search {
+    border: none;
+    padding: 10px 12px;
+    font-size: 13px;
+    outline: none;
+    border-bottom: 1px solid rgba(0, 0, 0, 0.05);
+    background: transparent;
+}
+
+.custom-select-options {
+    overflow-y: auto;
+    padding: 4px 0;
+}
+
+.custom-option {
+    padding: 6px 12px;
+    font-size: 13px;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+}
+
+.custom-option:hover {
+    background: #F1F1F1;
+}
+
+.custom-option-create {
+    padding: 6px 12px;
+    font-size: 13px;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.custom-option-create:hover {
+    background: #F1F1F1;
+}
+
+.tag-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+    padding: 2px 6px;
+    border-radius: 4px;
+    font-size: 13px;
+    background: #E3E2E0;
+    /* Notion tag color */
+    color: #32302C;
+}
+
+.tag-badge-remove {
+    cursor: pointer;
+    opacity: 0.5;
+    font-size: 10px;
+}
+
+.tag-badge-remove:hover {
+    opacity: 1;
+}
+
+.btn-delete-option {
+    opacity: 0;
+    color: #888;
+    cursor: pointer;
+    padding: 2px;
+}
+
+.custom-option:hover .btn-delete-option {
+    opacity: 1;
+}
+
+.btn-delete-option:hover {
+    color: red;
+}

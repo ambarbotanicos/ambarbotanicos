@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Painel Âmbar — Gestão de Produtos</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link
+        href="https://fonts.googleapis.com/css2?family=Roboto+Mono:wght@400;500&family=Roboto:ital,wght@0,300;0,400;0,500;0,600;1,300&display=swap"
+        rel="stylesheet">
+
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="js/tailwind.admin.config.js"></script>
+    <link rel="stylesheet" href="css/admin.css" />
+</head>
+
+<body class="text-foreground font-sans min-h-screen">
+
+    <!-- MENU SUPERIOR -->
+    <nav class="border-b border-border sticky top-0 z-50">
+        <div class="max-w-6xl mx-auto px-6 h-[60px] flex items-center justify-between">
+            <a href="index.html" class="font-sans text-base font-semibold tracking-tight text-foreground">
+                Âmbar
+            </a>
+            <div class="flex items-center gap-8">
+                <a href="index.html" class="text-sm font-medium text-foreground transition-colors">Home</a>
+                <button onclick="window.deslogar()"
+                    class="text-sm font-medium border border-border px-4 py-2 rounded-sm hover:bg-gray-50 transition-colors">
+                    Sair (Logout)
+                </button>
+            </div>
+        </div>
+    </nav>
+
+    <!-- CONTEÚDO PRINCIPAL -->
+    <div class="max-w-6xl mx-auto px-6 py-14">
+        <h1 class="text-2xl font-medium mb-8">Cadastre novos produtos</h1>
+
+        <div id="grid-admin-produtos" class="grid grid-cols-1 md:grid-cols-3 gap-6">
+
+            <!-- Botão de Criar Novo Produto -->
+            <a href="criar-produto.html"
+                class="flex flex-col items-center justify-center min-h-[220px] bg-[#FAFAFA] border border-dashed border-[#5EB1B9] rounded-sm hover:bg-[#F0F0F0] transition-colors cursor-pointer p-6">
+                <span class="text-sm font-medium text-[#7A7165] mb-4">Criar novo produto</span>
+                <div
+                    class="w-10 h-10 rounded-full bg-[#702F3B] flex items-center justify-center text-white text-2xl pb-1">
+                    +
+                </div>
+            </a>
+
+            <!-- Loading via JS -->
+            <p id="loading-msg" class="text-sm text-muted-foreground col-span-2">Carregando produtos...</p>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <script src="js/script.js"></script>
+    <script src="js/admin.js"></script>
+</body>
+
+</html>

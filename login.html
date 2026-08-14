@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Painel Âmbar — Login</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link
+        href="https://fonts.googleapis.com/css2?family=Roboto+Mono:wght@400;500&family=Roboto:ital,wght@0,300;0,400;0,500;0,600;1,300&display=swap"
+        rel="stylesheet">
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="js/tailwind.admin.config.js"></script>
+    <link rel="stylesheet" href="css/admin.css" />
+</head>
+
+<body class="bg-[#F5F5F5] text-foreground font-sans min-h-screen flex items-center justify-center">
+
+    <div class="max-w-md w-full bg-white p-8 border border-border rounded-sm shadow-sm">
+        <div class="text-center mb-8">
+            <h1 class="text-2xl font-semibold tracking-tight text-foreground mb-2">Âmbar Admin</h1>
+            <p class="text-sm text-muted-foreground">Acesse o painel para gerenciar os produtos.</p>
+        </div>
+
+        <form id="formLogin" class="flex flex-col gap-5">
+            <div>
+                <label class="block text-sm font-medium mb-1.5 text-foreground/90">E-mail</label>
+                <input type="email" id="email" required placeholder="admin@ambar.com"
+                    class="w-full p-2.5 text-sm border border-[rgba(0,0,0,0.08)] rounded-[3px] bg-[#FAFAFA] focus:outline-none focus:border-gray-300" />
+            </div>
+
+            <div>
+                <label class="block text-sm font-medium mb-1.5 text-foreground/90">Senha</label>
+                <input type="password" id="senha" required placeholder="••••••••"
+                    class="w-full p-2.5 text-sm border border-[rgba(0,0,0,0.08)] rounded-[3px] bg-[#FAFAFA] focus:outline-none focus:border-gray-300" />
+            </div>
+
+            <div id="login-msg" class="hidden text-sm font-medium text-center p-3 rounded-sm text-red-800 bg-red-100">
+            </div>
+
+            <button type="submit" id="btnEntrar"
+                class="mt-2 w-full flex items-center justify-center gap-2 px-6 py-2.5 bg-[#2A2520] text-[#F5F1EA] text-sm font-medium rounded-[3px] hover:opacity-90 transition-opacity">
+                Entrar
+            </button>
+        </form>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <script src="js/script.js"></script>
+    <script src="js/login.js"></script>
+</body>
+
+</html>
