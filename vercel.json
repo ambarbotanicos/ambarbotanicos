@@ -2,8 +2,8 @@
   "cleanUrls": true,
   "rewrites": [
     {
-      "source": "/produtos/:id*",
-      "destination": "/produto.html"
+      "source": "/produtos/:path*",
+      "destination": "/produto"
     }
   ],
   "headers": [
