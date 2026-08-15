@@ -88,8 +88,35 @@ document.addEventListener('DOMContentLoaded', async () => {
     const { data: p, error } = await db.from('produtos').select('*').eq('id', id).single();
     if (error || !p) return;
 
+    // --- SEO Dinâmico ---
+    const prodUrl = `https://ambarbotanicos.com.br/produtos/${p.id}`;
+    const prodDesc = p.descricao_curta || `${sanitize(p.nome)} — ingrediente botânico selecionado pela Âmbar Botânicos. Peça via WhatsApp!`;
+
+    document.title = `${sanitize(p.nome)} | Âmbar Botânicos`;
+    document.querySelector('meta[name="description"]')?.setAttribute('content', prodDesc.substring(0, 160));
+    document.querySelector('link[rel="canonical"]')?.setAttribute('href', prodUrl);
+    document.querySelector('meta[property="og:title"]')?.setAttribute('content', `${sanitize(p.nome)} | Âmbar Botânicos`);
+    document.querySelector('meta[property="og:description"]')?.setAttribute('content', prodDesc.substring(0, 160));
+    document.querySelector('meta[property="og:url"]')?.setAttribute('content', prodUrl);
+    if (p.imagem_url) {
+        document.querySelector('meta[property="og:image"]')?.setAttribute('content', p.imagem_url);
+    }
+
+    // JSON-LD Product dinâmico
+    const jsonldEl = document.getElementById('jsonld-produto');
+    if (jsonldEl) {
+        jsonldEl.textContent = JSON.stringify({
+            "@context": "https://schema.org",
+            "@type": "Product",
+            "name": p.nome,
+            "description": prodDesc,
+            "image": p.imagem_url || '',
+            "url": prodUrl,
+            "brand": { "@type": "Brand", "name": "Âmbar Botânicos" }
+        });
+    }
+
     // --- Cabeçalho ---
-    document.title = `Âmbar - ${sanitize(p.nome)}`;
     document.getElementById('prod-img').src = p.imagem_url;
     document.getElementById('prod-img').alt = sanitize(p.nome);
     document.getElementById('prod-nome').textContent = p.nome;

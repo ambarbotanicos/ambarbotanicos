@@ -1,0 +1,7 @@
+User-agent: *
+Allow: /
+Disallow: /admin.html
+Disallow: /login.html
+Disallow: /criar-produto.html
+
+Sitemap: https://ambarbotanicos.com.br/sitemap.xml
