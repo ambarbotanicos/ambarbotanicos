@@ -42,7 +42,7 @@ async function carregarProdutos(containerId, limite) {
     }
 
     container.innerHTML = produtos.map(p => `
-        <a href="produto.html?id=${encodeURIComponent(p.id)}" class="cursor-pointer group bg-card border border-[rgba(42,37,32,0.14)] rounded-sm overflow-hidden hover:shadow-md transition-shadow duration-200">
+        <a href="/produtos/${encodeURIComponent(p.id)}" class="cursor-pointer group bg-card border border-[rgba(42,37,32,0.14)] rounded-sm overflow-hidden hover:shadow-md transition-shadow duration-200">
             <div class="h-44 overflow-hidden bg-[#DDD9CE]">
                 <img src="${sanitize(p.imagem_url)}" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" alt="${sanitize(p.nome)}" loading="lazy" />
             </div>

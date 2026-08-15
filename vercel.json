@@ -1,4 +1,11 @@
 {
+  "cleanUrls": true,
+  "rewrites": [
+    {
+      "source": "/produtos/:id",
+      "destination": "/produto.html?id=:id"
+    }
+  ],
   "headers": [
     {
       "source": "/(.*)",

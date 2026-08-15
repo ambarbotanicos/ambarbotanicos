@@ -71,7 +71,18 @@ document.addEventListener('DOMContentLoaded', async () => {
     desenharRadar(radarPadrao);
 
     const params = new URLSearchParams(window.location.search);
-    const id = params.get('id');
+    let id = params.get('id');
+
+    // Suporte para URLs amigáveis: /produtos/:id
+    if (!id) {
+        const pathParts = window.location.pathname.split('/').filter(Boolean);
+        if (pathParts[0] === 'produtos' && pathParts[1]) {
+            id = pathParts[1];
+        } else if (pathParts[0] === 'produto' && pathParts[1]) {
+            id = pathParts[1];
+        }
+    }
+
     if (!id) return;
 
     const { data: p, error } = await db.from('produtos').select('*').eq('id', id).single();
