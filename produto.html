@@ -34,8 +34,8 @@
         rel="stylesheet">
 
     <script src="https://cdn.tailwindcss.com"></script>
-    <script src="js/tailwind.config.js"></script>
-    <link rel="stylesheet" href="css/style.css" />
+    <script src="/js/tailwind.config.js"></script>
+    <link rel="stylesheet" href="/css/style.css" />
 </head>
 
 <body class="bg-background text-foreground font-sans min-h-screen">
@@ -43,14 +43,10 @@
     <!-- MENU -->
     <nav class="border-b border-border bg-background/95 backdrop-blur-md sticky top-0 z-50">
         <div class="max-w-6xl mx-auto px-6 h-[60px] flex items-center justify-between">
-            <a href="index.html" class="inline-flex items-center text-foreground transition-opacity hover:opacity-90">
-                <img src="img/logo-header.svg" alt="Âmbar" class="h-12 w-auto" />
+            <a href="/" class="inline-flex items-center text-foreground transition-opacity hover:opacity-90">
+                <img src="/img/logo-header.svg" alt="Âmbar" class="h-12 w-auto" />
             </a>
             <div class="flex items-center gap-8">
-                <!-- <a href="index.html"
-                    class="text-sm text-muted-foreground hover:text-foreground transition-colors">Home</a>
-                <a href="produtos.html" class="text-sm font-medium text-foreground transition-colors">Produtos</a> -->
-                <!-- <a href="conteudo.html" class="text-sm text-muted-foreground hover:text-foreground transition-colors">Conteúdo</a> -->
                 <a href="https://wa.me/5521967453706?text=Ol%C3%A1%2C%20vim%20pelo%20site%20e%20gostaria%20de%20receber%20mais%20informa%C3%A7%C3%B5es%20sobre%20a%20%C3%82mbar%20Bot%C3%A2nicos."
                     target="_blank" rel="noopener noreferrer"
                     class="text-sm font-medium bg-foreground text-primary-foreground px-4 py-2 rounded-sm hover:opacity-80 transition-opacity inline-flex items-center justify-center">
@@ -100,24 +96,6 @@
         </div>
     </section>
 
-    <!-- BLOCO DO PRODUTOR -->
-    <!-- <section class="border-t border-border py-20">
-        <div class="max-w-6xl mx-auto px-6 grid grid-cols-1 md:grid-cols-2 gap-16 items-center">
-            <div class="h-72 rounded-sm overflow-hidden bg-secondary">
-                <img src="https://images.unsplash.com/photo-1626906722163-bd4c03cb3b9b?w=800&h=576&fit=crop"
-                    alt="Produtor no campo" class="w-full h-full object-cover" />
-            </div>
-            <div>
-                <p class="font-sans text-2xl italic leading-relaxed text-foreground font-light mb-6">
-                    "Minha família coleta essa raiz há décadas. O Cerrado nos deu muito — e a gente cuida dele de
-                    volta."
-                </p>
-                <p class="text-[10px] font-mono uppercase tracking-widest text-muted-foreground">João Batista Rezende
-                    &mdash; Goiás, GO</p>
-            </div>
-        </div>
-    </section> -->
-
     <!-- PARCEIROS -->
     <section class="border-t border-border py-14" id="section-parceiros">
         <div class="max-w-6xl mx-auto px-6">
@@ -128,54 +106,6 @@
         </div>
     </section>
 
-    <!-- QUEM USA -->
-    <!-- <section class="border-t border-border py-14 bg-muted">
-        <div class="max-w-6xl mx-auto px-6">
-            <p class="text-[10px] font-mono uppercase tracking-widest text-muted-foreground mb-8">Quem usa este botânico
-            </p>
-            <div class="grid grid-cols-1 md:grid-cols-2 gap-8 mb-8">
-                <div class="h-56 rounded-sm overflow-hidden bg-secondary">
-                    <img src="https://images.unsplash.com/photo-1414235077428-338989a2e8c0?w=800&h=448&fit=crop"
-                        class="w-full h-full object-cover" alt="Restaurante Raízes" />
-                </div>
-                <div class="flex flex-col justify-center">
-                    <p class="font-sans text-xl font-semibold mb-1">Restaurante Raízes</p>
-                    <p class="text-[10px] font-mono uppercase tracking-widest text-muted-foreground mb-4">São Paulo, SP
-                    </p>
-                    <p class="text-sm text-muted-foreground leading-relaxed">Drinques autorais com canela-de-velho e
-                        cachaça artesanal de Salinas.</p>
-                </div>
-            </div>
-
-            <div class="flex gap-5 overflow-x-auto pb-4">
-                <div class="flex-none w-[272px] bg-card border border-border rounded-sm overflow-hidden">
-                    <div class="h-36 overflow-hidden bg-secondary">
-                        <img src="https://images.unsplash.com/photo-1581510260769-a40cc475d754?w=544&h=288&fit=crop"
-                            class="w-full h-full object-cover" alt="Bar Cerrado" />
-                    </div>
-                    <div class="p-4">
-                        <p class="font-sans text-sm font-semibold mb-0.5">Bar Cerrado</p>
-                        <p class="text-[10px] font-mono uppercase tracking-widest text-muted-foreground mb-2">Brasília,
-                            DF</p>
-                        <p class="text-xs text-muted-foreground leading-relaxed">Xaropes e infusões para coquetelaria
-                            contemporânea com identidade do bioma.</p>
-                    </div>
-                </div>
-                <div class="flex-none w-[272px] bg-card border border-border rounded-sm overflow-hidden">
-                    <div class="h-36 overflow-hidden bg-secondary">
-                        <img src="https://images.unsplash.com/photo-1574966739987-65e38db0f7ce?w=544&h=288&fit=crop"
-                            class="w-full h-full object-cover" alt="Taberna do Cerrado" />
-                    </div>
-                    <div class="p-4">
-                        <p class="font-sans text-sm font-semibold mb-0.5">Taberna do Cerrado</p>
-                        <p class="text-[10px] font-mono uppercase tracking-widest text-muted-foreground mb-2">Goiânia,
-                            GO</p>
-                        <p class="text-xs text-muted-foreground leading-relaxed">Tempero base em pratos regionais do
-                            menu degustação de sete etapas.</p>
-                    </div>
-                </div>
-            </div>
-        </div>
     <!-- CTA FINAL -->
     <footer class="bg-foreground text-primary-foreground py-20">
         <div class="max-w-6xl mx-auto px-6 flex flex-col md:flex-row items-start md:items-center justify-between gap-8">
@@ -200,8 +130,8 @@
 
     <!-- SUPABASE + RADAR + DADOS DO PRODUTO -->
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-    <script src="js/script.js"></script>
-    <script src="js/produto.js"></script>
+    <script src="/js/script.js"></script>
+    <script src="/js/produto.js"></script>
 </body>
 
 </html>
