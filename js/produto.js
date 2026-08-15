@@ -73,20 +73,26 @@ document.addEventListener('DOMContentLoaded', async () => {
     const params = new URLSearchParams(window.location.search);
     let id = params.get('id');
 
-    // Suporte para URLs amigáveis: /produtos/:id
+    // Suporte robusto para URLs amigáveis (/produtos/ID ou /produtos/ID/)
     if (!id) {
         const pathParts = window.location.pathname.split('/').filter(Boolean);
-        if (pathParts[0] === 'produtos' && pathParts[1]) {
-            id = pathParts[1];
-        } else if (pathParts[0] === 'produto' && pathParts[1]) {
-            id = pathParts[1];
+        const ultimoSegmento = pathParts[pathParts.length - 1];
+
+        if (ultimoSegmento && !['produto', 'produto.html', 'produtos', 'produtos.html'].includes(ultimoSegmento)) {
+            id = ultimoSegmento;
         }
     }
 
-    if (!id) return;
+    if (!id) {
+        console.error("ID do produto não encontrado na URL.");
+        return;
+    }
 
     const { data: p, error } = await db.from('produtos').select('*').eq('id', id).single();
-    if (error || !p) return;
+    if (error || !p) {
+        console.error("Erro ao buscar produto do Supabase:", error);
+        return;
+    }
 
     // --- SEO Dinâmico ---
     const prodUrl = `https://ambarbotanicos.com.br/produtos/${p.id}`;
