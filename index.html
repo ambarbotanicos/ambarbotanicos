@@ -50,15 +50,13 @@
 <body class="bg-background text-foreground font-sans min-h-screen">
 
     <!-- MENU SUPERIOR -->
-    <nav class="border-b border-border bg-background/95 backdrop-blur-md sticky top-0 z-50">
-        <div class="max-w-6xl mx-auto px-6 h-[60px] flex items-center justify-between">
-            <a href="index.html" class="inline-flex items-center text-foreground transition-opacity hover:opacity-90">
-                <img src="img/logo-header.svg" alt="Âmbar" class="h-12 w-auto" />
-            </a>
-            <div class="flex items-center gap-8">
-                <a href="sobre.html" class="text-sm font-medium hover:opacity-70 transition-opacity">Sobre a Âmbar</a>
-
-
+    <nav aria-label="Menu principal" class="site-nav border-b border-border bg-background/95 backdrop-blur-md sticky top-0 z-50">
+        <div class="max-w-6xl mx-auto px-6 flex items-center justify-between">
+            <a href="index.html" aria-label="Âmbar Botânicos" class="site-brand inline-flex items-center hover:opacity-90"><img src="img/logo-header.svg" alt="Âmbar Botânicos" class="h-12 w-auto" /></a>
+            <div class="site-nav-links flex items-center gap-6">
+                <a href="sobre.html" class="text-sm font-medium hover:opacity-70">Sobre a Âmbar</a>
+                <a href="produtores.html" class="text-sm font-medium hover:opacity-70">Produtores</a>
+                <a href="quem-acredita.html" class="text-sm font-medium hover:opacity-70">Quem acredita no nosso trabalho</a>
             </div>
         </div>
     </nav>
