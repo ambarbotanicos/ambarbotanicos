@@ -34,6 +34,8 @@ document.addEventListener('DOMContentLoaded',async()=>{
         document.getElementById('cart-finalize').click();
         assert('Finalizar compra abre dados dentro do carrinho',!document.getElementById('cart-checkout').hidden&&document.getElementById('cart-summary').hidden);
         const form=document.getElementById('checkout-form');
+        const remember=form.querySelector('.remember-data');assert('Consentimento opcional não vem marcado',!remember.checked&&!remember.required);
+        assert('Opção fica logo após CPF e CNPJ',form.querySelector('[data-fields=pf] input[name=cpf]').parentElement.nextElementSibling.classList.contains('remember-panel')&&form.querySelector('[data-fields=pj] input[name=cnpj]').parentElement.nextElementSibling.classList.contains('remember-panel'));
         const set=(name,value)=>{form.elements[name].value=value;form.elements[name].dispatchEvent(new Event('input',{bubbles:true}));};
         set('name','Cliente de Teste');set('cpf','12345678901');set('phone','21999998888');set('cep','20040020');await tick();
         assert('Consulta CEP preenche endereço',form.elements.address.value==='Rua de Teste'&&form.elements.district.value==='Centro');
@@ -43,6 +45,10 @@ document.addEventListener('DOMContentLoaded',async()=>{
         set('number','   ');form.requestSubmit();assert('Número com espaços bloqueia envio',opened.length===0);
         set('number','100');
         form.requestSubmit();assert('CPF válido gera URL codificada e mensagem',opened.length===1&&decodeURIComponent(opened[0]).includes('2x Café de teste (500g)')&&decodeURIComponent(opened[0]).includes('Pessoa Física'));
+        assert('Compra sem consentimento não salva dados',!localStorage.getItem('shop-buyer-v1'));
+        remember.click();form.requestSubmit();let remembered=JSON.parse(localStorage.getItem('shop-buyer-v1'));assert('Consentimento salva comprador e endereço com prazo',remembered.values.cpf==='123.456.789-01'&&remembered.values.number==='100'&&remembered.expiresAt>remembered.consentedAt&&remembered.consentVersion===1);
+        assert('Observações e campos inativos não são persistidos',!('notes' in remembered.values)&&!('cnpj' in remembered.values));
+        remember.click();assert('Desmarcar revoga e apaga dados',!localStorage.getItem('shop-buyer-v1')&&!form.querySelectorAll('.remember-data')[1].checked);opened.pop();
         assert('Mensagem separa rua e número',decodeURIComponent(opened[0]).includes('Rua / Logradouro: Rua de Teste')&&decodeURIComponent(opened[0]).includes('Número: 100'));
         set('cpf','123');form.requestSubmit();assert('CPF incompleto bloqueia envio',opened.length===1);set('cpf','12345678901');
         document.querySelector('[data-buyer="pj"]').click();

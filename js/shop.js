@@ -1,4 +1,4 @@
-/* Shared storefront, cart and checkout. No buyer details are persisted. */
+/* Buyer details are saved on this device only with optional, revocable consent. */
 const Shop = (() => {
     const money = n => new Intl.NumberFormat('pt-BR', { style: 'currency', currency: 'BRL' }).format(n);
     const escape = value => String(value ?? '').replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
@@ -110,7 +110,7 @@ const Shop = (() => {
         if (!grid) return;
         const banner = document.createElement('p'); banner.className='shipping-banner'; banner.title='Frete cortesia sujeito à confirmação da região'; banner.innerHTML='<svg aria-hidden="true" width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M3 6h11v11H3zM14 10h4l3 4v3h-7"/><circle cx="7" cy="18" r="2"/><circle cx="18" cy="18" r="2"/></svg><span data-shipping-banner></span>'; const header=document.querySelector('nav');if(header)header.before(banner);else document.body.prepend(banner);
         if (grid.id==='grid-produtos-catalogo') grid.className='shop-grid';
-        const aside = document.createElement('aside'); aside.id='cart-panel'; aside.className='cart-panel'; aside.innerHTML=`<h2>Seu carrinho</h2><ul id="cart-items" aria-live="polite"></ul><div class="cart-subtotal">Subtotal dos produtos <strong id="cart-total"></strong></div><p id="cart-freight" class="freight-hint" aria-live="polite"></p><h3>Dados para o pedido</h3><div class="buyer-toggle"><button type="button" data-buyer="pf" aria-pressed="true">Pessoa Física (CPF)</button><button type="button" data-buyer="pj" aria-pressed="false">Pessoa Jurídica (CNPJ)</button></div><form id="checkout-form"><fieldset data-fields="pf">${field('name','Nome completo',120)}${field('cpf','CPF',14)}${field('phone','Telefone / WhatsApp',15,true,'tel')}${field('email','E-mail',254,false,'email')}</fieldset><fieldset data-fields="pj" hidden disabled>${field('cnpj','CNPJ completo',18)}${field('legalName','Nome do Estabelecimento (Razão Social)',150)}${field('tradeName','Nome Fantasia',120)}${field('ie','Inscrição Estadual (IE)',30)}${field('businessEmail','E-mail Comercial',254,true,'email')}${field('businessPhone','Telefone / WhatsApp da empresa',15,true,'tel')}</fieldset><fieldset><legend>Endereço de entrega</legend>${field('cep','CEP',9)}<p id="cep-feedback" role="status"></p>${field('address','Rua / Logradouro',180)}${field('number','Número',20)}${field('complement','Complemento',100,false)}${field('district','Bairro',90)}${field('city','Cidade',100,true,'text','Rio de Janeiro')}${field('state','UF',2,true,'text','RJ')}<label>Observações<textarea name="notes" maxlength="500" rows="3" placeholder="Instruções de entrega, horário..."></textarea></label></fieldset><p id="checkout-error" role="alert"></p><button type="submit" class="shop-button">Enviar pedido pelo WhatsApp</button></form>`; setupDrawer(aside);
+        const aside = document.createElement('aside'); aside.id='cart-panel'; aside.className='cart-panel'; aside.innerHTML=`<h2>Seu carrinho</h2><ul id="cart-items" aria-live="polite"></ul><div class="cart-subtotal">Subtotal dos produtos <strong id="cart-total"></strong></div><p id="cart-freight" class="freight-hint" aria-live="polite"></p><h3>Dados para o pedido</h3><div class="buyer-toggle"><button type="button" data-buyer="pf" aria-pressed="true">Pessoa Física (CPF)</button><button type="button" data-buyer="pj" aria-pressed="false">Pessoa Jurídica (CNPJ)</button></div><form id="checkout-form"><fieldset data-fields="pf">${field('name','Nome completo',120)}${field('cpf','CPF',14)}${rememberControls('pf')}${field('phone','Telefone / WhatsApp',15,true,'tel')}${field('email','E-mail',254,false,'email')}</fieldset><fieldset data-fields="pj" hidden disabled>${field('cnpj','CNPJ completo',18)}${rememberControls('pj')}${field('legalName','Nome do Estabelecimento (Razão Social)',150)}${field('tradeName','Nome Fantasia',120)}${field('ie','Inscrição Estadual (IE)',30)}${field('businessEmail','E-mail Comercial',254,true,'email')}${field('businessPhone','Telefone / WhatsApp da empresa',15,true,'tel')}</fieldset><fieldset><legend>Endereço de entrega</legend>${field('cep','CEP',9)}<p id="cep-feedback" role="status"></p>${field('address','Rua / Logradouro',180)}${field('number','Número',20)}${field('complement','Complemento',100,false)}${field('district','Bairro',90)}${field('city','Cidade',100,true,'text','Rio de Janeiro')}${field('state','UF',2,true,'text','RJ')}<label>Observações<textarea name="notes" maxlength="500" rows="3" placeholder="Instruções de entrega, horário..."></textarea></label></fieldset><p id="checkout-error" role="alert"></p><button type="submit" class="shop-button">Enviar pedido pelo WhatsApp</button></form>`; setupDrawer(aside);
         const nav = document.querySelector('nav > div > div');
         if (nav) { const b=document.createElement('button'); b.type='button'; b.className='cart-header'; b.innerHTML='Carrinho (<span data-cart-count>0</span>)'; b.setAttribute('aria-controls','cart-panel'); b.setAttribute('aria-expanded','false'); b.onclick=()=>openDrawer('summary'); nav.append(b); }
         checkout=document.getElementById('checkout-form'); checkout.noValidate=true; checkout.dataset.buyer='pf';
@@ -120,7 +120,35 @@ const Shop = (() => {
         Object.entries(masks).forEach(([name,mask]) => {checkout.elements[name].inputMode='numeric';checkout.elements[name].addEventListener('input',e=>{e.target.value=mask(e.target.value);e.target.setCustomValidity('');});});
         checkout.elements.state.addEventListener('input',e=>{e.target.value=e.target.value.replace(/[^a-z]/gi,'').toUpperCase();e.target.setCustomValidity('');});
         checkout.elements.cep.addEventListener('input',lookupCep);
-        checkout.addEventListener('submit',send); renderCart();
+        checkout.querySelectorAll('.remember-data').forEach(el=>el.onchange=()=>{setRememberChoice(el.checked);if(!el.checked)forgetBuyer();else rememberStatus('Os dados serão salvos quando você enviar o pedido.');});
+        checkout.querySelectorAll('.forget-buyer').forEach(el=>el.onclick=()=>forgetBuyer(true));
+        restoreBuyer();checkout.addEventListener('submit',send); renderCart();
+    }
+    const buyerStorageKey='shop-buyer-v1',buyerConsentVersion=1;
+    const commonBuyerFields=['cep','address','number','complement','district','city','state'];
+    const personalBuyerFields={pf:['name','cpf','phone','email'],pj:['cnpj','legalName','tradeName','ie','businessEmail','businessPhone']};
+    function rememberControls(type){return `<div class="remember-panel"><label class="remember-label"><input type="checkbox" class="remember-data" aria-describedby="remember-info-${type}"><span>Lembrar meus dados para compras futuras</span></label><p id="remember-info-${type}">Opcional. Ao enviar o pedido, autorizo salvar meus dados de identificação, contato e entrega neste navegador por 90 dias para preencher compras futuras. Evite usar em aparelhos compartilhados.</p><button type="button" class="forget-buyer">Apagar meus dados salvos</button><p class="remember-status" role="status"></p><details><summary>Como meus dados são usados</summary><p>A Âmbar Botânicos usa os dados informados para preparar e atender seu pedido. Ao clicar em Enviar pedido pelo WhatsApp, os dados do comprador e de entrega são incluídos na mensagem aberta no WhatsApp da loja. Esta opção de lembrar é independente da compra e não autoriza publicidade.</p><p>Se você marcar a opção, CPF ou CNPJ, nome ou dados da empresa, telefone, e-mail e endereço serão salvos apenas neste navegador. Observações do pedido não serão salvas. Você pode revogar a autorização desmarcando a opção ou usando Apagar meus dados salvos. Os dados expirados são descartados na próxima abertura do site.</p><p>Para informações ou pedidos sobre seus dados enviados à loja, entre em contato pelo WhatsApp indicado no rodapé. Apagar neste navegador não apaga mensagens ou registros de pedidos já recebidos pela loja.</p></details></div>`;}
+    function setRememberChoice(checked){checkout.querySelectorAll('.remember-data').forEach(el=>el.checked=checked);}
+    function rememberStatus(text){checkout.querySelectorAll('.remember-status').forEach(el=>el.textContent=text);}
+    function forgetBuyer(clearForm=false){
+        try{localStorage.removeItem(buyerStorageKey);}catch{rememberStatus('Não foi possível apagar os dados neste navegador. Tente limpar os dados do site nas configurações do navegador.');return;}
+        setRememberChoice(false);
+        if(clearForm){for(const name of [...commonBuyerFields,...personalBuyerFields.pf,...personalBuyerFields.pj]){checkout.elements[name].value='';checkout.elements[name].setCustomValidity('');}document.getElementById('cep-feedback').textContent='';}
+        rememberStatus('Dados salvos apagados deste navegador.');
+    }
+    function restoreBuyer(){
+        let saved;try{saved=JSON.parse(localStorage.getItem(buyerStorageKey));}catch{forgetBuyer();return;}
+        if(!saved)return;
+        if(saved.consentVersion!==buyerConsentVersion||!['pf','pj'].includes(saved.buyer)||!Number.isFinite(saved.expiresAt)||saved.expiresAt<=Date.now()||!saved.values||typeof saved.values!=='object'){forgetBuyer();return;}
+        document.querySelector(`[data-buyer="${saved.buyer}"]`).click();
+        for(const name of [...commonBuyerFields,...personalBuyerFields[saved.buyer]]){const input=checkout.elements[name],value=saved.values[name];if(typeof value==='string'&&value.length<=input.maxLength)input.value=value;}
+        setRememberChoice(true);rememberStatus('Dados salvos preenchidos. Você pode editá-los ou apagar.');
+    }
+    function rememberBuyer(values,buyer){
+        if(!checkout.querySelector('.remember-data').checked)return;
+        const allowed=[...commonBuyerFields,...personalBuyerFields[buyer]],savedValues=Object.fromEntries(allowed.map(name=>[name,String(values[name]??'').trim()]));
+        const now=Date.now();
+        try{localStorage.setItem(buyerStorageKey,JSON.stringify({consentVersion:buyerConsentVersion,consentedAt:now,expiresAt:now+90*24*60*60*1000,buyer,values:savedValues}));rememberStatus('Dados salvos neste navegador por 90 dias.');}catch{rememberStatus('Este navegador não permitiu salvar seus dados. O pedido pode continuar normalmente.');}
     }
     let cepRequest=0;
     async function lookupCep() {
@@ -151,7 +179,7 @@ const Shop = (() => {
         checkout.elements.state.setCustomValidity(/^[A-Z]{2}$/.test(checkout.elements.state.value)?'':'Informe a UF com duas letras.');
         for(const input of checkout.querySelectorAll('input[required]')) {if(!input.closest('fieldset').disabled && !input.value.trim())input.setCustomValidity('Preencha este campo.');else if(!checks[input.name] && input.name!=='state')input.setCustomValidity('');}
         if(!checkout.reportValidity())return;
-        const values=Object.fromEntries(new FormData(checkout));const url=`https://wa.me/${settings.whatsapp}?text=${encodeURIComponent(message(values,buyer))}`;
+        const values=Object.fromEntries(new FormData(checkout));rememberBuyer(values,buyer);const url=`https://wa.me/${settings.whatsapp}?text=${encodeURIComponent(message(values,buyer))}`;
         window.open(url,'_blank','noopener,noreferrer');
     }
     async function loadSettings() {
@@ -159,6 +187,6 @@ const Shop = (() => {
         renderCart();return settings;
     }
     document.addEventListener('DOMContentLoaded',()=>{mount();settingsReady=loadSettings();});
-    window.addEventListener('storage',e=>{if(e.key==='cart-v2'){const saved=read('cart-v2',[]);cart=Array.isArray(saved)?saved.filter(i=>i&&typeof i.key==='string'&&typeof i.name==='string'&&validPrice(i.price)&&Number.isInteger(i.quantity)&&i.quantity>0):[];renderCart();}});
+    window.addEventListener('storage',e=>{if(e.key===buyerStorageKey&&!e.newValue&&checkout){setRememberChoice(false);rememberStatus('Dados salvos apagados em outra aba.');}if(e.key==='cart-v2'){const saved=read('cart-v2',[]);cart=Array.isArray(saved)?saved.filter(i=>i&&typeof i.key==='string'&&typeof i.name==='string'&&validPrice(i.price)&&Number.isInteger(i.quantity)&&i.quantity>0):[];renderCart();}});
     return {money,escape,image,normalize,card,purchase,maskCpf,maskCnpj,maskPhone,maskCep,message,validPrice,loadSettings,getSettings:()=>settings,saveSettings(value){settings=value;save('shop-settings-v2',value);renderCart();},cacheProducts(products){save('products-v2',products);},settingsReady:()=>settingsReady};
 })();
