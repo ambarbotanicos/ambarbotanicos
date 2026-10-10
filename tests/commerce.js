@@ -37,8 +37,13 @@ document.addEventListener('DOMContentLoaded',async()=>{
         const set=(name,value)=>{form.elements[name].value=value;form.elements[name].dispatchEvent(new Event('input',{bubbles:true}));};
         set('name','Cliente de Teste');set('cpf','12345678901');set('phone','21999998888');set('cep','20040020');await tick();
         assert('Consulta CEP preenche endereço',form.elements.address.value==='Rua de Teste'&&form.elements.district.value==='Centro');
-        set('address','Rua de Teste, 100');
+        set('address','Rua de Teste');
+        assert('CEP não preenche número do imóvel',form.elements.number.value==='');
+        form.requestSubmit();assert('Número vazio bloqueia envio',opened.length===0);
+        set('number','   ');form.requestSubmit();assert('Número com espaços bloqueia envio',opened.length===0);
+        set('number','100');
         form.requestSubmit();assert('CPF válido gera URL codificada e mensagem',opened.length===1&&decodeURIComponent(opened[0]).includes('2x Café de teste (500g)')&&decodeURIComponent(opened[0]).includes('Pessoa Física'));
+        assert('Mensagem separa rua e número',decodeURIComponent(opened[0]).includes('Rua / Logradouro: Rua de Teste')&&decodeURIComponent(opened[0]).includes('Número: 100'));
         set('cpf','123');form.requestSubmit();assert('CPF incompleto bloqueia envio',opened.length===1);set('cpf','12345678901');
         document.querySelector('[data-buyer="pj"]').click();
         assert('CPF fica oculto e desativado ao selecionar CNPJ',form.querySelector('[data-fields="pf"]').hidden&&form.querySelector('[data-fields="pf"]').disabled);
