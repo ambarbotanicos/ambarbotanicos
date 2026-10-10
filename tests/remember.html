@@ -5,6 +5,35 @@ const values=buyer==='pj'?{cnpj:'12.345.678/0001-90',legalName:'Empresa de Teste
 memory.set(key,JSON.stringify({consentVersion:1,consentedAt:Date.now()-1000,expiresAt:scenario==='expired'?Date.now()-1:Date.now()+100000,buyer,values}));
 Object.defineProperty(window,'localStorage',{value:{getItem:k=>memory.get(k)??null,setItem:(k,v)=>memory.set(k,v),removeItem:k=>memory.delete(k)}});
 const db={from:()=>({select:()=>({eq:()=>({single:async()=>({data:null,error:null})})})})};
-</script><script src="../js/shop.js?v=remember-buyer"></script><script>
-document.addEventListener('DOMContentLoaded',()=>{const reports=[],assert=(n,v)=>{if(!v)throw Error(n);reports.push('PASSOU: '+n);};try{const form=document.getElementById('checkout-form');if(scenario==='expired'){assert('Dados vencidos são apagados',!localStorage.getItem(key));assert('Consentimento expirado não é reativado',!form.querySelector('.remember-data').checked);assert('Documento expirado não é preenchido',form.elements.cpf.value==='');}else{assert('Tipo de comprador é restaurado',form.dataset.buyer===buyer);assert('Documento e número são restaurados',form.elements[buyer==='pj'?'cnpj':'cpf'].value===values[buyer==='pj'?'cnpj':'cpf']&&form.elements.number.value==='100');assert('Consentimento existente sincroniza as duas opções',Array.from(form.querySelectorAll('.remember-data')).every(el=>el.checked));form.querySelector('fieldset:not([disabled]) .forget-buyer').click();assert('Botão apagar remove o armazenamento',!localStorage.getItem(key));assert('Apagar limpa dados do formulário',form.elements.number.value===''&&form.elements[buyer==='pj'?'cnpj':'cpf'].value==='');assert('Apagar retira o consentimento',Array.from(form.querySelectorAll('.remember-data')).every(el=>!el.checked));}document.body.dataset.testResult='passed';}catch(e){reports.push('FALHOU: '+e.message);document.body.dataset.testResult='failed';}document.getElementById('results').textContent=reports.join('\n');});
+</script><script src="../js/shop.js?v=document-match"></script><script>
+document.addEventListener('DOMContentLoaded',()=>{
+ const reports=[],assert=(n,v)=>{if(!v)throw Error(n);reports.push('PASSOU: '+n);};
+ try{
+  const form=document.getElementById('checkout-form'),doc=buyer==='pj'?'cnpj':'cpf',name=buyer==='pj'?'legalName':'name';
+  const typeButton=b=>document.querySelector(`[data-buyer="${b}"]`).click();
+  const enter=v=>{form.elements[doc].value=v;form.elements[doc].dispatchEvent(new Event('input',{bubbles:true}));};
+  assert('Abrir carrinho não revela documento nem nome salvo',form.elements.cpf.value===''&&form.elements.cnpj.value===''&&form.elements.name.value===''&&form.elements.legalName.value==='');
+  assert('Documento aparece antes do nome',form.querySelector(`[data-fields="${buyer}"] input`).name===doc);
+  assert('Consentimento inicial não vem marcado',!form.querySelector('.remember-data').checked);
+  typeButton(buyer);
+  if(scenario==='expired'){
+   assert('Dados vencidos são apagados',!localStorage.getItem(key));enter(values[doc]);
+   assert('Documento expirado não preenche dados',form.elements[name].value===''&&form.elements.number.value==='');
+  }else{
+   enter('123');assert('Documento incompleto não preenche',form.elements[name].value===''&&form.elements.number.value==='');
+   enter(buyer==='pj'?'99999999000199':'99999999999');assert('Documento diferente não preenche',form.elements[name].value===''&&form.elements.number.value==='');
+   enter(values[doc]);assert('Documento igual preenche nome e endereço',form.elements[name].value===values[name]&&form.elements.number.value==='100');
+   assert('Consentimento existente é restaurado após coincidência',Array.from(form.querySelectorAll('.remember-data')).every(el=>el.checked));
+   form.elements.number.value='200';enter(values[doc]);assert('Mesmo documento não sobrescreve edições',form.elements.number.value==='200');
+   enter('123');assert('Alterar documento limpa dados do comprador anterior',form.elements[name].value===''&&form.elements.number.value==='');
+   assert('Alterar documento retira autorização do perfil anterior',!form.querySelector('.remember-data').checked);
+   enter(values[doc]);typeButton(buyer==='pj'?'pf':'pj');assert('Trocar CPF/CNPJ limpa endereço preenchido automaticamente',form.elements.number.value==='');
+   typeButton(buyer);enter(values[doc]);form.querySelector('fieldset:not([disabled]) .forget-buyer').click();
+   assert('Apagar elimina armazenamento e campos',!localStorage.getItem(key)&&form.elements[doc].value===''&&form.elements[name].value===''&&form.elements.number.value==='');
+   enter(values[doc]);assert('Dados apagados não são restaurados',form.elements[name].value==='');
+  }
+  document.body.dataset.testResult='passed';
+ }catch(e){reports.push('FALHOU: '+e.message);document.body.dataset.testResult='failed';}
+ document.getElementById('results').textContent=reports.join('\n');
+});
 </script></html>
