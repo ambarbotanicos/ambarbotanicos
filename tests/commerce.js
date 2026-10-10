@@ -1,0 +1,58 @@
+document.addEventListener('DOMContentLoaded',async()=>{
+    const reports=[];
+    const assert=(label,condition)=>{if(!condition)throw new Error(label);reports.push('PASSOU: '+label);};
+    const tick=()=>new Promise(resolve=>setTimeout(resolve,0));
+    try {
+        await Shop.settingsReady();
+        assert('Máscaras completas e parciais de CPF/CNPJ',Shop.maskCpf('12345678901')==='123.456.789-01'&&Shop.maskCpf('123456')==='123.456'&&Shop.maskCnpj('12345678000190')==='12.345.678/0001-90');
+        assert('Máscaras de telefone e CEP',Shop.maskPhone('21999998888')==='(21) 99999-8888'&&Shop.maskPhone('2133334444')==='(21) 3333-4444'&&Shop.maskCep('20040020')==='20040-020');
+        assert('Escape HTML protege aspas e sinais',Shop.escape('<"\'&>')==='&lt;&quot;&#39;&amp;&gt;');
+        const grid=document.getElementById('grid-produtos-catalogo');
+        grid.append(Shop.card({id:'p1',name:'Café de teste',description:'Produto fictício',hasVariations:true,variations:[{id:'v1',weight:'250g',price:28},{id:'v2',weight:'500g',price:52}]}));
+        grid.append(Shop.card({id:'p2',name:'Produto antigo sem preço'}));
+        const card=grid.firstElementChild;
+        const drawer=document.getElementById('cart-panel');
+        assert('Carrinho e dados ficam ocultos fora da vitrine',drawer.hidden&&document.getElementById('cart-checkout').hidden&&!document.querySelector('.shop-layout'));
+        document.querySelector('.cart-header').click();
+        assert('Botão Carrinho abre painel lateral',!drawer.hidden&&drawer.getAttribute('role')==='dialog');
+
+        assert('Produtos antigos não recebem preço inventado',grid.lastElementChild.querySelector('button').disabled);
+        card.querySelectorAll('.weight-options button')[1].click();
+        assert('Selecionar peso atualiza o preço',card.querySelector('.product-price').textContent.includes('52,00'));
+        card.querySelector('.shop-button').click();card.querySelector('.shop-button').click();
+        card.querySelectorAll('.weight-options button')[0].click();card.querySelector('.shop-button').click();
+        let cart=JSON.parse(localStorage.getItem('cart-v2'));
+        assert('Variações possuem chaves e quantidades independentes',cart.length===2&&cart[0].key==='p1__v2'&&cart[0].quantity===2&&cart[1].quantity===1);
+        assert('Subtotal e contador',document.getElementById('cart-total').textContent.includes('132,00')&&document.querySelector('[data-cart-count]').textContent==='3');
+        assert('Frete abaixo do limite',document.getElementById('cart-freight').textContent.includes('18,00'));
+        card.querySelector('.shop-button').click();assert('Frete no limite ou acima',document.getElementById('cart-freight').textContent.includes('Seu pedido atingiu'));
+        document.querySelector('[data-key="p1__v1"][data-change="-1"]').click();document.querySelector('[data-key="p1__v1"][data-change="-1"]').click();
+        assert('Quantidade zero remove o item',JSON.parse(localStorage.getItem('cart-v2')).length===1);
+        document.getElementById('cart-finalize').click();
+        assert('Finalizar compra abre dados dentro do carrinho',!document.getElementById('cart-checkout').hidden&&document.getElementById('cart-summary').hidden);
+        const form=document.getElementById('checkout-form');
+        const set=(name,value)=>{form.elements[name].value=value;form.elements[name].dispatchEvent(new Event('input',{bubbles:true}));};
+        set('name','Cliente de Teste');set('cpf','12345678901');set('phone','21999998888');set('cep','20040020');await tick();
+        assert('Consulta CEP preenche endereço',form.elements.address.value==='Rua de Teste'&&form.elements.district.value==='Centro');
+        set('address','Rua de Teste, 100');
+        form.requestSubmit();assert('CPF válido gera URL codificada e mensagem',opened.length===1&&decodeURIComponent(opened[0]).includes('2x Café de teste (500g)')&&decodeURIComponent(opened[0]).includes('Pessoa Física'));
+        set('cpf','123');form.requestSubmit();assert('CPF incompleto bloqueia envio',opened.length===1);set('cpf','12345678901');
+        document.querySelector('[data-buyer="pj"]').click();
+        assert('CPF fica oculto e desativado ao selecionar CNPJ',form.querySelector('[data-fields="pf"]').hidden&&form.querySelector('[data-fields="pf"]').disabled);
+        set('cnpj','12345678000190');set('legalName','Empresa de Teste Ltda');set('tradeName','Loja de Teste');set('ie','ISENTO');set('businessEmail','teste@example.com');set('businessPhone','2133334444');
+        form.requestSubmit();assert('CNPJ valida somente campos ativos',opened.length===2&&decodeURIComponent(opened[1]).includes('Pessoa Jurídica')&&!decodeURIComponent(opened[1]).includes('CPF:'));
+        set('businessEmail','email-invalido');form.requestSubmit();assert('E-mail empresarial inválido bloqueia envio',opened.length===2);set('businessEmail','teste@example.com');
+        Shop.saveSettings({whatsapp:'',freeShipping:150});form.requestSubmit();assert('WhatsApp ausente produz alerta',opened.length===2&&document.getElementById('checkout-error').textContent.includes('lojista precisa configurar'));
+        Shop.saveSettings({whatsapp:'5521967453706',freeShipping:150});
+        document.querySelector('[data-change="-1"]').click();document.querySelector('[data-change="-1"]').click();form.requestSubmit();assert('Carrinho vazio impede envio',opened.length===2&&document.getElementById('checkout-error').textContent==='Seu carrinho está vazio.');
+        const malicious=Shop.card({id:'x',name:'<img src=x onerror=alert(1)>',description:'<script>alert(1)</script>',image:'javascript:alert(1)',price:10});
+        assert('Conteúdo de produto não injeta HTML',!malicious.querySelector('script')&&!malicious.querySelector('img')&&malicious.querySelector('h2').textContent.includes('<img'));
+        card.querySelectorAll('.weight-options button')[1].click();card.querySelector('.shop-button').click();
+        document.querySelector('.cart-back').click();
+        document.querySelector('[data-remove]').click();assert('Botão Remover exclui item',JSON.parse(localStorage.getItem('cart-v2')).length===0);
+        document.getElementById('cart-close').click();assert('Fechar carrinho libera a vitrine',drawer.hidden&&!document.body.classList.contains('cart-open'));
+        document.querySelector('.cart-header').click();document.dispatchEvent(new KeyboardEvent('keydown',{key:'Escape'}));assert('Escape fecha o painel',drawer.hidden);
+        reports.push(`\n${reports.length} testes passaram.`);document.body.dataset.testResult='passed';
+    } catch(error){reports.push('FALHOU: '+error.message);document.body.dataset.testResult='failed';}
+    document.getElementById('results').textContent=reports.join('\n');
+});

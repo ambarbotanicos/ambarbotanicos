@@ -1,0 +1,7 @@
+<!doctype html><html lang="pt-BR"><meta charset="utf-8"><title>Testes do fluxo de pedidos</title><link rel="stylesheet" href="../css/shop.css"><style>body{font:16px system-ui;background:#f5f1ea;color:#2a2520;padding:24px}#results{white-space:pre-wrap;margin-bottom:24px}nav{margin-bottom:24px}#fixture{max-width:1100px;margin:auto}</style><h1>Testes do fluxo de pedidos</h1><p>Dados fictícios; nenhum pedido ou alteração é enviado ao Supabase ou WhatsApp.</p><pre id="results">Executando...</pre><div id="fixture"><nav><div><div></div></div></nav><div id="grid-produtos-catalogo"></div></div>
+<script>
+const memory=new Map();Object.defineProperty(window,'localStorage',{value:{getItem:k=>memory.get(k)??null,setItem:(k,v)=>memory.set(k,v)}});
+const db={from:()=>({select:()=>({eq:()=>({single:async()=>({data:{whatsapp:'5521967453706',frete_cortesia:150},error:null})})})})};
+const opened=[];window.open=(url)=>{opened.push(url);return {};};
+window.fetch=async()=>({ok:true,json:async()=>({logradouro:'Rua de Teste',bairro:'Centro',localidade:'Rio de Janeiro',uf:'RJ'})});
+</script><script src="../js/shop.js"></script><script src="commerce.js"></script></html>

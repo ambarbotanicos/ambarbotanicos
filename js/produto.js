@@ -94,8 +94,10 @@ document.addEventListener('DOMContentLoaded', async () => {
         return;
     }
 
+    document.getElementById('product-purchase')?.append(Shop.purchase(Shop.normalize(p)));
+
     // --- SEO Dinâmico ---
-    const prodUrl = `https://ambarbotanicos.com.br/produtos/${p.id}`;
+    const prodUrl = `https://ambarbotanicos.com.br/produto.html?id=${encodeURIComponent(p.id)}`;
     const prodDesc = p.descricao_curta || `${sanitize(p.nome)} — ingrediente botânico selecionado pela Âmbar Botânicos. Peça via WhatsApp!`;
 
     document.title = `${sanitize(p.nome)} | Âmbar Botânicos`;

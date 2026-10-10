@@ -1,0 +1,28 @@
+<!doctype html><html lang="pt-BR"><meta charset="utf-8"><title>Testes do cadastro e configurações</title><link rel="stylesheet" href="../css/shop.css"><style>body{font:16px system-ui;padding:24px}pre{white-space:pre-wrap}</style><h1>Testes do cadastro e configurações</h1><pre id="results">Executando...</pre><form id="formProdutoCria"><section id="step-1"><input id="nome" required><textarea id="descricao_curta"></textarea><img id="previewImg"><button type="button" id="btn-proximo">Próximo</button></section><section id="step-2" class="hidden"></section></form><div id="grid-admin-produtos"></div>
+<script>
+const memory=new Map();Object.defineProperty(window,'localStorage',{value:{getItem:k=>memory.get(k)??null,setItem:(k,v)=>memory.set(k,v)}});
+const writes=[];const db={from:()=>({select:()=>({eq:()=>({single:async()=>({data:{whatsapp:'5521967453706',frete_cortesia:150},error:null})})}),update:payload=>({eq:()=>({select:async()=>{writes.push(payload);return {data:[{id:1}],error:null};}})})})};
+</script><script src="../js/shop.js"></script><script src="../js/shop-admin.js"></script><script>
+document.addEventListener('DOMContentLoaded',async()=>{
+ const reports=[],assert=(name,value)=>{if(!value)throw new Error(name);reports.push('PASSOU: '+name);};
+ try{
+  await Shop.settingsReady();await new Promise(r=>setTimeout(r,0));
+  const root=document.querySelector('.commerce-admin');
+  assert('Nome e descrição possuem limites',document.getElementById('nome').maxLength===100&&document.getElementById('descricao_curta').maxLength===250);
+  root.querySelector('#product-price').value='12.50';assert('Preço único é serializado',ShopAdmin.payload().preco===12.5&&!ShopAdmin.payload().tem_variacoes);
+  root.querySelector('#has-variations').click();assert('Preço único desativado com variações',root.querySelector('#product-price').disabled&&!root.querySelector('#variation-table').hidden);
+  root.querySelector('[data-weight="250g"]').click();root.querySelector('.variation-price').value='28';root.querySelector('[data-weight="500g"]').click();root.querySelectorAll('.variation-price')[1].value='52';
+  let payload=ShopAdmin.payload();assert('Atalhos criam pesos e preços',payload.variacoes.length===2&&payload.variacoes[1].weight==='500g'&&payload.preco===28);
+  const ids=payload.variacoes.map(v=>v.id);ShopAdmin.populate({id:'p1',nome:'Café',tem_variacoes:true,variacoes:payload.variacoes,preco:28,imagem_url:'https://example.com/foto.jpg'});
+  assert('Edição preserva IDs de variação',ShopAdmin.payload().variacoes.every((v,i)=>v.id===ids[i]));
+  root.querySelectorAll('.variation-row button')[1].click();root.querySelector('.variation-row button').click();assert('Remoção preserva ao menos uma variação',root.querySelectorAll('.variation-row').length===1);
+  root.querySelector('#add-variation').click();root.querySelectorAll('.variation-weight')[1].value='250g';root.querySelectorAll('.variation-price')[1].value='30';let duplicate=false;try{ShopAdmin.payload();}catch{duplicate=true;}assert('Pesos duplicados são rejeitados',duplicate);
+  assert('URL de imagem permanece na edição',ShopAdmin.imageUrl()==='https://example.com/foto.jpg');
+  const form=document.getElementById('settings-form');form.elements.whatsapp.value='5511999998888';form.elements.shipping.value='200';form.requestSubmit();await new Promise(r=>setTimeout(r,0));
+  assert('Configurações são enviadas ao banco',writes[0].whatsapp==='5511999998888'&&writes[0].frete_cortesia===200);
+  assert('Configurações também persistem no navegador',JSON.parse(localStorage.getItem('shop-settings-v2')).freeShipping===200);
+  reports.push('\n'+reports.length+' testes passaram.');document.body.dataset.testResult='passed';
+ }catch(e){reports.push('FALHOU: '+e.message);document.body.dataset.testResult='failed';}
+ document.getElementById('results').textContent=reports.join('\n');
+});
+</script></html>

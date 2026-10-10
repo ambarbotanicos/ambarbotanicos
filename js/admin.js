@@ -343,13 +343,15 @@ if (formProdutoCria) {
 
         const imagemFile = document.getElementById('imagemFile');
         const file = imagemFile ? imagemFile.files[0] : null;
-        if (!file && !editIdGlobal) {
+        if (!file && !ShopAdmin.imageUrl() && !editImagemUrlGlobal) {
             mostrarMsg('error', 'Por favor selecione uma foto do produto (Etapa 1).');
             setLoading(false);
             return;
         }
 
         try {
+            if (file && (!['image/jpeg', 'image/png', 'image/webp'].includes(file.type) || file.size > 5 * 1024 * 1024)) throw new Error('Use uma foto JPG, PNG ou WebP de até 5 MB.');
+            const commerce = ShopAdmin.payload();
             const produtorGroups = document.querySelectorAll('#produtores-container .produtor-group');
             const produtores = [];
             produtorGroups.forEach(group => {
@@ -387,7 +389,7 @@ if (formProdutoCria) {
             }
 
             const nomeArquivo = file ? `${Date.now()}-${file.name.replace(/\s+/g, '-')}` : null;
-            let finalImageUrl = editImagemUrlGlobal || '';
+            let finalImageUrl = ShopAdmin.imageUrl() || editImagemUrlGlobal || '';
 
             if (file) {
                 const { error: uploadError } = await db.storage
@@ -404,9 +406,10 @@ if (formProdutoCria) {
             }
 
             const payload = {
-                nome: v('nome'),
+                ...commerce,
+                nome: v('nome').slice(0, 100),
                 nome_cientifico: v('nome_cientifico'),
-                descricao_curta: v('descricao_curta'),
+                descricao_curta: v('descricao_curta').slice(0, 250),
                 produtor: produtorString,
                 regiao: produtores[0]?.origem || '',
                 tipo: produtores[0]?.tipo || '',
@@ -432,12 +435,12 @@ if (formProdutoCria) {
             }
 
             if (dbError) {
-                mostrarMsg('error', 'Erro ao salvar. Tente novamente.');
+                mostrarMsg('error', 'Não foi possível salvar. Confira os campos e se a atualização do banco para preços e variações foi aplicada.');
                 setLoading(false);
                 return;
             }
 
-            mostrarMsg('success', editIdGlobal ? '✅ Produto atualizado com sucesso!' : '✅ Produto publicado com sucesso!');
+            mostrarMsg('success', editIdGlobal ? 'Produto atualizado com sucesso!' : 'Produto publicado com sucesso!');
             setTimeout(() => {
                 window.location.href = 'admin.html';
             }, 1000);
@@ -479,6 +482,7 @@ async function carregarParaEdicao(id) {
         return;
     }
 
+    ShopAdmin.populate(p);
     document.getElementById('nome').value = p.nome || '';
     document.getElementById('nome_cientifico').value = p.nome_cientifico || '';
     document.getElementById('descricao_curta').value = p.descricao_curta || '';
