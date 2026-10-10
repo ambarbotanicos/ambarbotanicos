@@ -351,6 +351,8 @@ if (formProdutoCria) {
 
         try {
             if (file && (!['image/jpeg', 'image/png', 'image/webp'].includes(file.type) || file.size > 5 * 1024 * 1024)) throw new Error('Use uma foto JPG, PNG ou WebP de até 5 MB.');
+            ShopAdmin.payload();
+            await ShopAdmin.uploadImages();
             const commerce = ShopAdmin.payload();
             const produtorGroups = document.querySelectorAll('#produtores-container .produtor-group');
             const produtores = [];

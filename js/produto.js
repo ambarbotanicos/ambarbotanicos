@@ -94,7 +94,7 @@ document.addEventListener('DOMContentLoaded', async () => {
         return;
     }
 
-    document.getElementById('product-purchase')?.append(Shop.purchase(Shop.normalize(p)));
+    document.getElementById('product-purchase')?.append(Shop.purchase(Shop.normalize(p),document.getElementById('prod-img')));
 
     // --- SEO Dinâmico ---
     const prodUrl = `https://ambarbotanicos.com.br/produto.html?id=${encodeURIComponent(p.id)}`;

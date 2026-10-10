@@ -1,9 +1,14 @@
 const ShopAdmin = (() => {
     let root;
     function row(variant={id:crypto.randomUUID(),weight:'',price:''}) {
-        const div=document.createElement('div');div.className='variation-row';div.dataset.id=variant.id;
-        div.innerHTML=`<label>Peso/opção<input class="variation-weight" maxlength="100" required value="${Shop.escape(variant.weight)}" placeholder="250g"></label><label>Preço (R$)<input class="variation-price" type="number" min="0" step="0.01" required value="${Shop.escape(variant.price)}"></label><button type="button">Remover</button>`;
-        div.querySelector('button').onclick=()=>{if(root.querySelectorAll('.variation-row').length>1)div.remove();};root.querySelector('#variation-rows').append(div); toggle();
+        const div=document.createElement('div');div.className='variation-row';div.dataset.id=variant.id;div.dataset.image=Shop.image(variant.image)||'';
+        div.innerHTML=`<label>Peso/opção<input class="variation-weight" maxlength="100" required value="${Shop.escape(variant.weight)}" placeholder="250g"></label><label>Preço (R$)<input class="variation-price" type="number" min="0" step="0.01" required value="${Shop.escape(variant.price)}"></label><button type="button" class="remove-variation">Remover variação</button><div class="variation-photo"><label>Foto desta variação<input class="variation-file" type="file" accept="image/jpeg,image/png,image/webp"></label><img class="variation-preview" alt="Prévia da foto desta variação" hidden><p class="variation-photo-status" role="status">JPG, PNG ou WebP, até 5 MB. Sem foto, será usada a imagem principal.</p><button type="button" class="remove-variation-photo" hidden>Remover foto</button></div>`;
+        div.querySelector('.remove-variation').onclick=()=>{if(root.querySelectorAll('.variation-row').length>1)div.remove();};root.querySelector('#variation-rows').append(div);
+        const input=div.querySelector('.variation-file'),preview=div.querySelector('.variation-preview'),remove=div.querySelector('.remove-variation-photo'),status=div.querySelector('.variation-photo-status');
+        function showPhoto(src){preview.hidden=!src;if(src)preview.src=src;else preview.removeAttribute('src');remove.hidden=!src;}
+        showPhoto(div.dataset.image);
+        input.onchange=()=>{const file=input.files[0];input.setCustomValidity('');if(!file)return;try{validatePhoto(file);}catch(e){input.value='';status.textContent=e.message;showPhoto(div.dataset.image);return;}status.textContent='Foto selecionada. Será enviada ao salvar o produto.';const reader=new FileReader();reader.onload=()=>{if(input.files[0]===file)showPhoto(reader.result);};reader.readAsDataURL(file);};
+        remove.onclick=()=>{input.value='';div.dataset.image='';showPhoto('');status.textContent='Será usada a imagem principal do produto.';};toggle();
     }
     function toggle() {
         const on=root.querySelector('#has-variations').checked;
@@ -17,10 +22,24 @@ const ShopAdmin = (() => {
     }
     function payload() {
         const on=root.querySelector('#has-variations').checked;
-        const variants=on?Array.from(root.querySelectorAll('.variation-row')).map(r=>({id:r.dataset.id,weight:r.querySelector('.variation-weight').value.trim(),price:Number(r.querySelector('.variation-price').value)})):[];
+        const variants=on?Array.from(root.querySelectorAll('.variation-row')).map(r=>({id:r.dataset.id,weight:r.querySelector('.variation-weight').value.trim(),price:Number(r.querySelector('.variation-price').value),image:Shop.image(r.dataset.image)})):[];
         if(on && (!variants.length || variants.some(v=>!v.weight || !Shop.validPrice(v.price))))throw new Error('Informe peso e preço para cada variação.');
         if(new Set(variants.map(v=>v.weight.toLowerCase())).size!==variants.length)throw new Error('Use opções de peso diferentes para cada variação.');
         return {preco:on?Math.min(...variants.map(v=>v.price)):Number(root.querySelector('#product-price').value),tem_variacoes:on,variacoes:variants};
+    }
+    function validatePhoto(file){if(!['image/jpeg','image/png','image/webp'].includes(file.type)||file.size>5*1024*1024)throw new Error('Use uma foto JPG, PNG ou WebP de até 5 MB para cada variação.');}
+    async function uploadImages(){
+        payload();if(!root.querySelector('#has-variations').checked)return;
+        const rows=Array.from(root.querySelectorAll('.variation-row'));
+        rows.forEach(r=>{const f=r.querySelector('.variation-file').files[0];if(f)validatePhoto(f);});
+        for(const r of rows){const input=r.querySelector('.variation-file'),file=input.files[0];if(!file)continue;
+            const extension={'image/jpeg':'jpg','image/png':'png','image/webp':'webp'}[file.type];
+            const path=`variacao-${crypto.randomUUID()}.${extension}`;
+            const {error}=await db.storage.from('produtos-imagens').upload(path,file,{cacheControl:'3600',upsert:false});
+            if(error)throw new Error(`Não foi possível enviar a foto da variação ${r.querySelector('.variation-weight').value}. Tente salvar novamente.`);
+            const {data}=db.storage.from('produtos-imagens').getPublicUrl(path);const url=Shop.image(data?.publicUrl);if(!url)throw new Error('Não foi possível obter o link da foto da variação.');
+            r.dataset.image=url;input.value='';r.querySelector('.variation-photo-status').textContent='Foto enviada.';
+        }
     }
     function imageUrl() {return root?.querySelector('#product-image-url').value.trim()||'';}
     document.addEventListener('DOMContentLoaded',()=>{
@@ -41,5 +60,5 @@ const ShopAdmin = (() => {
         document.getElementById('grid-admin-produtos').before(panel);await Shop.settingsReady();const form=panel.querySelector('form'),settings=Shop.getSettings();form.elements.whatsapp.value=settings.whatsapp;form.elements.shipping.value=settings.freeShipping;
         form.onsubmit=async e=>{e.preventDefault();const status=panel.querySelector('#settings-status');const value={whatsapp:form.elements.whatsapp.value.trim(),freeShipping:Number(form.elements.shipping.value)};if(value.whatsapp&&!/^\d{12,15}$/.test(value.whatsapp)){status.textContent='Informe o número com código do país, DDD e telefone, somente dígitos.';return;}const button=form.querySelector('button');button.disabled=true;status.textContent='Salvando...';try{const {data,error}=await db.from('loja_config').update({whatsapp:value.whatsapp,frete_cortesia:value.freeShipping}).eq('id',1).select('id');if(error||!data?.length)throw new Error();Shop.saveSettings(value);status.textContent='Configurações salvas.';}catch{status.textContent='Não foi possível salvar. Confira a atualização do banco e a permissão de administrador.';}finally{button.disabled=false;}};
     }
-    return {populate,payload,imageUrl};
+    return {populate,payload,imageUrl,uploadImages};
 })();

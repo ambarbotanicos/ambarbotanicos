@@ -8,7 +8,7 @@ document.addEventListener('DOMContentLoaded',async()=>{
         assert('Máscaras de telefone e CEP',Shop.maskPhone('21999998888')==='(21) 99999-8888'&&Shop.maskPhone('2133334444')==='(21) 3333-4444'&&Shop.maskCep('20040020')==='20040-020');
         assert('Escape HTML protege aspas e sinais',Shop.escape('<"\'&>')==='&lt;&quot;&#39;&amp;&gt;');
         const grid=document.getElementById('grid-produtos-catalogo');
-        grid.append(Shop.card({id:'p1',name:'Café de teste',description:'Produto fictício',hasVariations:true,variations:[{id:'v1',weight:'250g',price:28},{id:'v2',weight:'500g',price:52}]}));
+        grid.append(Shop.card({id:'p1',name:'Café de teste',description:'Produto fictício',image:'https://example.com/principal.png',hasVariations:true,variations:[{id:'v1',weight:'250g',price:28},{id:'v2',weight:'500g',price:52,image:'https://example.com/500g.png'}]}));
         grid.append(Shop.card({id:'p2',name:'Produto antigo sem preço'}));
         const card=grid.firstElementChild;
         const drawer=document.getElementById('cart-panel');
@@ -18,10 +18,13 @@ document.addEventListener('DOMContentLoaded',async()=>{
 
         assert('Produtos antigos não recebem preço inventado',grid.lastElementChild.querySelector('button').disabled);
         card.querySelectorAll('.weight-options button')[1].click();
+        assert('Selecionar peso atualiza a foto',card.querySelector('.shop-image img').src==='https://example.com/500g.png');
         assert('Selecionar peso atualiza o preço',card.querySelector('.product-price').textContent.includes('52,00'));
         card.querySelector('.shop-button').click();card.querySelector('.shop-button').click();
         card.querySelectorAll('.weight-options button')[0].click();card.querySelector('.shop-button').click();
         let cart=JSON.parse(localStorage.getItem('cart-v2'));
+        assert('Carrinho usa foto da variação e fallback principal',cart[0].image==='https://example.com/500g.png'&&cart[1].image==='https://example.com/principal.png');
+        assert('Peso sem foto mostra imagem principal',card.querySelector('.shop-image img').src==='https://example.com/principal.png');
         assert('Variações possuem chaves e quantidades independentes',cart.length===2&&cart[0].key==='p1__v2'&&cart[0].quantity===2&&cart[1].quantity===1);
         assert('Subtotal e contador',document.getElementById('cart-total').textContent.includes('132,00')&&document.querySelector('[data-cart-count]').textContent==='3');
         assert('Frete abaixo do limite',document.getElementById('cart-freight').textContent.includes('18,00'));

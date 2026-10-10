@@ -49,3 +49,5 @@
 
 /* Announcement above the storefront header. */
 .shipping-banner{display:flex;align-items:center;justify-content:center;gap:10px;width:100%;margin:0;padding:10px 16px;min-height:38px;background:#a44700;color:#fff;border:0;border-radius:0;font-size:14px;font-weight:500;line-height:1.4;text-align:center;text-transform:uppercase}.shipping-banner svg{flex-shrink:0}@media(max-width:520px){.shipping-banner{font-size:12px;padding:9px 12px;gap:8px}}
+
+.variation-photo{grid-column:1/-1;padding:16px;border:1px dashed #bfb5a8;border-radius:4px;background:#fff}.variation-photo input[type=file]{border:0;padding:8px 0;background:transparent}.variation-preview{max-width:160px;height:120px;object-fit:contain;margin:10px 0}.variation-photo-status{color:#746b60}.commerce-admin .variation-row>.remove-variation{margin-bottom:13px}

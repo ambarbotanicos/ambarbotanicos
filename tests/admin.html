@@ -1,7 +1,7 @@
 <!doctype html><html lang="pt-BR"><meta charset="utf-8"><title>Testes do cadastro e configurações</title><link rel="stylesheet" href="../css/shop.css"><style>body{font:16px system-ui;padding:24px}pre{white-space:pre-wrap}</style><h1>Testes do cadastro e configurações</h1><pre id="results">Executando...</pre><form id="formProdutoCria"><section id="step-1"><input id="nome" required><textarea id="descricao_curta"></textarea><img id="previewImg"><button type="button" id="btn-proximo">Próximo</button></section><section id="step-2" class="hidden"></section></form><div id="grid-admin-produtos"></div>
 <script>
 const memory=new Map();Object.defineProperty(window,'localStorage',{value:{getItem:k=>memory.get(k)??null,setItem:(k,v)=>memory.set(k,v)}});
-const writes=[];const db={from:()=>({select:()=>({eq:()=>({single:async()=>({data:{whatsapp:'5521967453706',frete_cortesia:150},error:null})})}),update:payload=>({eq:()=>({select:async()=>{writes.push(payload);return {data:[{id:1}],error:null};}})})})};
+const uploads=[];let uploadError=false;const writes=[];const db={storage:{from:()=>({upload:async(path,file,options)=>{uploads.push({path,file,options});return {error:uploadError?{message:'falha simulada'}:null};},getPublicUrl:path=>({data:{publicUrl:'https://example.com/'+path}})})},from:()=>({select:()=>({eq:()=>({single:async()=>({data:{whatsapp:'5521967453706',frete_cortesia:150},error:null})})}),update:payload=>({eq:()=>({select:async()=>{writes.push(payload);return {data:[{id:1}],error:null};}})})})};
 </script><script src="../js/shop.js"></script><script src="../js/shop-admin.js"></script><script>
 document.addEventListener('DOMContentLoaded',async()=>{
  const reports=[],assert=(name,value)=>{if(!value)throw new Error(name);reports.push('PASSOU: '+name);};
@@ -15,7 +15,18 @@ document.addEventListener('DOMContentLoaded',async()=>{
   let payload=ShopAdmin.payload();assert('Atalhos criam pesos e preços',payload.variacoes.length===2&&payload.variacoes[1].weight==='500g'&&payload.preco===28);
   const ids=payload.variacoes.map(v=>v.id);ShopAdmin.populate({id:'p1',nome:'Café',tem_variacoes:true,variacoes:payload.variacoes,preco:28,imagem_url:'https://example.com/foto.jpg'});
   assert('Edição preserva IDs de variação',ShopAdmin.payload().variacoes.every((v,i)=>v.id===ids[i]));
-  root.querySelectorAll('.variation-row button')[1].click();root.querySelector('.variation-row button').click();assert('Remoção preserva ao menos uma variação',root.querySelectorAll('.variation-row').length===1);
+  assert('Cada variação possui upload próprio',root.querySelectorAll('.variation-file').length===2);
+  const files=root.querySelectorAll('.variation-file');const attach=(input,file)=>{const dt=new DataTransfer();dt.items.add(file);input.files=dt.files;};
+  attach(files[0],new File(['foto'],'peso250.png',{type:'image/png'}));attach(files[1],new File(['foto'],'peso500.webp',{type:'image/webp'}));
+  await ShopAdmin.uploadImages();payload=ShopAdmin.payload();assert('Fotos enviadas e associadas a cada peso',uploads.length===2&&payload.variacoes.every(v=>v.image.startsWith('https://example.com/variacao-'))&&payload.variacoes[0].image!==payload.variacoes[1].image);
+  assert('Upload usa nomes únicos sem sobrescrever',uploads.every(u=>u.options.upsert===false));
+  await ShopAdmin.uploadImages();assert('Nova tentativa não duplica fotos já enviadas',uploads.length===2);
+  ShopAdmin.populate({id:'p1',tem_variacoes:true,variacoes:payload.variacoes,imagem_url:'https://example.com/foto.jpg'});assert('Edição preserva fotos e prévias',ShopAdmin.payload().variacoes.every((v,i)=>v.image===payload.variacoes[i].image)&&!root.querySelector('.variation-preview').hidden);
+  const firstFile=root.querySelector('.variation-file');attach(firstFile,new File(['novo'],'nova.png',{type:'image/png'}));uploadError=true;let failed=false;try{await ShopAdmin.uploadImages();}catch{failed=true;}assert('Falha no upload impede salvamento e preserva arquivo',failed&&firstFile.files.length===1);uploadError=false;await ShopAdmin.uploadImages();
+  attach(firstFile,new File(['x'],'arquivo.svg',{type:'image/svg+xml'}));const before=uploads.length;let invalid=false;try{await ShopAdmin.uploadImages();}catch{invalid=true;}assert('Arquivo não permitido é bloqueado antes do upload',invalid&&uploads.length===before);firstFile.value='';
+  attach(firstFile,new File([new Uint8Array(5*1024*1024+1)],'grande.png',{type:'image/png'}));let oversized=false;try{await ShopAdmin.uploadImages();}catch{oversized=true;}assert('Fotos acima de 5 MB são bloqueadas',oversized&&uploads.length===before);firstFile.value='';
+  root.querySelector('.remove-variation-photo').click();assert('Remover foto mantém peso e preço',ShopAdmin.payload().variacoes[0].image===''&&ShopAdmin.payload().variacoes[0].weight==='250g');
+  root.querySelectorAll('.variation-row .remove-variation')[1].click();root.querySelector('.variation-row .remove-variation').click();assert('Remoção preserva ao menos uma variação',root.querySelectorAll('.variation-row').length===1);
   root.querySelector('#add-variation').click();root.querySelectorAll('.variation-weight')[1].value='250g';root.querySelectorAll('.variation-price')[1].value='30';let duplicate=false;try{ShopAdmin.payload();}catch{duplicate=true;}assert('Pesos duplicados são rejeitados',duplicate);
   assert('URL de imagem permanece na edição',ShopAdmin.imageUrl()==='https://example.com/foto.jpg');
   const form=document.getElementById('settings-form');form.elements.whatsapp.value='5511999998888';form.elements.shipping.value='200';form.requestSubmit();await new Promise(r=>setTimeout(r,0));

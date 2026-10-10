@@ -7,7 +7,7 @@ const Shop = (() => {
     const save = (key, value) => { try { localStorage.setItem(key, JSON.stringify(value)); } catch { /* Storage may be disabled. */ } };
     const validPrice = value => value !== null && value !== '' && Number.isFinite(Number(value)) && Number(value) >= 0;
     const image = value => { if (typeof value !== 'string' || !value.trim()) return ''; try { const u = new URL(value, location.href); return ['http:', 'https:'].includes(u.protocol) ? u.href : ''; } catch { return ''; } };
-    const normalize = p => ({ id: String(p.id), name: p.nome ?? p.name ?? '', description: p.descricao_curta ?? p.description ?? '', image: image(p.imagem_url ?? p.image), price: validPrice(p.preco ?? p.price) ? Number(p.preco ?? p.price) : null, hasVariations: Boolean(p.tem_variacoes ?? p.hasVariations), variations: Array.isArray(p.variacoes ?? p.variations) ? (p.variacoes ?? p.variations).filter(v => v.id && v.weight && validPrice(v.price)).map(v => ({id: String(v.id), weight: String(v.weight), price: Number(v.price)})) : [] });
+    const normalize = p => ({ id: String(p.id), name: p.nome ?? p.name ?? '', description: p.descricao_curta ?? p.description ?? '', image: image(p.imagem_url ?? p.image), price: validPrice(p.preco ?? p.price) ? Number(p.preco ?? p.price) : null, hasVariations: Boolean(p.tem_variacoes ?? p.hasVariations), variations: Array.isArray(p.variacoes ?? p.variations) ? (p.variacoes ?? p.variations).filter(v => v.id && v.weight && validPrice(v.price)).map(v => ({id: String(v.id), weight: String(v.weight), price: Number(v.price), image:image(v.image)})) : [] });
     const cachedSettings = read('shop-settings-v2', {});
     let settings = { whatsapp: typeof cachedSettings.whatsapp === 'string' ? cachedSettings.whatsapp : '5521967453706', freeShipping: validPrice(cachedSettings.freeShipping) ? Number(cachedSettings.freeShipping) : 150 };
     let settingsReady;
@@ -44,14 +44,14 @@ const Shop = (() => {
         const key = variant ? `${p.id}__${variant.id}` : p.id;
         const name = p.name + (variant ? ` (${variant.weight})` : '');
         const existing = cart.find(i => i.key === key);
-        if (existing) existing.quantity++; else cart.push({key,productId:p.id,variationId:variant?.id ?? null,name,productName:p.name,weight:variant?.weight||'',image:p.image,price,quantity:1});
+        if (existing) existing.quantity++; else cart.push({key,productId:p.id,variationId:variant?.id ?? null,name,productName:p.name,weight:variant?.weight||'',image:variant?.image||p.image,price,quantity:1});
         renderCart(); toast(`Adicionado ao carrinho: ${name}`);
     }
-    function purchase(p) {
+    function purchase(p, photo) {
         const wrap = document.createElement('div'); wrap.className='purchase';
         let selected = p.hasVariations ? p.variations[0] : null;
         const price = document.createElement('strong'); price.className='product-price';
-        const update = () => price.textContent = validPrice(selected?.price ?? p.price) && (!p.hasVariations || selected) ? money(selected?.price ?? p.price) : 'Preço sob consulta';
+        const update = () => {price.textContent = validPrice(selected?.price ?? p.price) && (!p.hasVariations || selected) ? money(selected?.price ?? p.price) : 'Preço sob consulta';if(photo){const src=selected?.image||p.image;if(src)photo.src=src;else photo.removeAttribute('src');}};
         wrap.append(price);
         if (p.hasVariations) {
             const pills = document.createElement('div'); pills.className='weight-options'; pills.setAttribute('aria-label','Escolha o peso');
@@ -63,7 +63,7 @@ const Shop = (() => {
         const p = normalize(raw);
         const article = document.createElement('article'); article.className='shop-card';
         article.innerHTML = `<a href="produto.html?id=${encodeURIComponent(p.id)}"><div class="shop-image">${p.image ? `<img src="${escape(p.image)}" alt="${escape(p.name)}" loading="lazy">` : ''}</div><h2>${escape(p.name)}</h2></a><p>${escape(p.description)}</p>`;
-        article.append(purchase(p)); return article;
+        article.append(purchase(p,article.querySelector('.shop-image img'))); return article;
     }
     const field = (name,label,max,required=true,type='text',value='') => `<label>${label}<input name="${name}" type="${type}" maxlength="${max}" ${required?'required':''} value="${escape(value)}"></label>`;
     let focusBeforeDrawer, inertBeforeDrawer = new Map();
@@ -108,7 +108,7 @@ const Shop = (() => {
     function mount() {
         const grid = document.getElementById('grid-produtos-catalogo') || document.getElementById('product-overview');
         if (!grid) return;
-        const banner = document.createElement('p'); banner.className='shipping-banner'; banner.title='Frete cortesia sujeito à confirmação da região'; banner.innerHTML='<svg aria-hidden="true" width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M3 6h11v11H3zM14 10h4l3 4v3h-7"/><circle cx="7" cy="18" r="2"/><circle cx="18" cy="18" r="2"/></svg><span data-shipping-banner></span>'; document.body.insertBefore(banner,document.querySelector('nav'));
+        const banner = document.createElement('p'); banner.className='shipping-banner'; banner.title='Frete cortesia sujeito à confirmação da região'; banner.innerHTML='<svg aria-hidden="true" width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M3 6h11v11H3zM14 10h4l3 4v3h-7"/><circle cx="7" cy="18" r="2"/><circle cx="18" cy="18" r="2"/></svg><span data-shipping-banner></span>'; const header=document.querySelector('nav');if(header)header.before(banner);else document.body.prepend(banner);
         if (grid.id==='grid-produtos-catalogo') grid.className='shop-grid';
         const aside = document.createElement('aside'); aside.id='cart-panel'; aside.className='cart-panel'; aside.innerHTML=`<h2>Seu carrinho</h2><ul id="cart-items" aria-live="polite"></ul><div class="cart-subtotal">Subtotal dos produtos <strong id="cart-total"></strong></div><p id="cart-freight" class="freight-hint" aria-live="polite"></p><h3>Dados para o pedido</h3><div class="buyer-toggle"><button type="button" data-buyer="pf" aria-pressed="true">Pessoa Física (CPF)</button><button type="button" data-buyer="pj" aria-pressed="false">Pessoa Jurídica (CNPJ)</button></div><form id="checkout-form"><fieldset data-fields="pf">${field('name','Nome completo',120)}${field('cpf','CPF',14)}${field('phone','Telefone / WhatsApp',15,true,'tel')}${field('email','E-mail',254,false,'email')}</fieldset><fieldset data-fields="pj" hidden disabled>${field('cnpj','CNPJ completo',18)}${field('legalName','Nome do Estabelecimento (Razão Social)',150)}${field('tradeName','Nome Fantasia',120)}${field('ie','Inscrição Estadual (IE)',30)}${field('businessEmail','E-mail Comercial',254,true,'email')}${field('businessPhone','Telefone / WhatsApp da empresa',15,true,'tel')}</fieldset><fieldset><legend>Endereço de entrega</legend>${field('cep','CEP',9)}<p id="cep-feedback" role="status"></p>${field('address','Endereço (Rua e número)',180)}${field('complement','Complemento',100,false)}${field('district','Bairro',90)}${field('city','Cidade',100,true,'text','Rio de Janeiro')}${field('state','UF',2,true,'text','RJ')}<label>Observações<textarea name="notes" maxlength="500" rows="3" placeholder="Instruções de entrega, horário..."></textarea></label></fieldset><p id="checkout-error" role="alert"></p><button type="submit" class="shop-button">Enviar pedido pelo WhatsApp</button></form>`; setupDrawer(aside);
         const nav = document.querySelector('nav > div > div');
