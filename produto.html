@@ -34,8 +34,9 @@
         rel="stylesheet">
 
     <script src="https://cdn.tailwindcss.com"></script>
-    <script src="/js/tailwind.config.js"></script>
-    <link rel="stylesheet" href="/css/style.css" />
+    <script src="js/tailwind.config.js"></script>
+    <link rel="stylesheet" href="css/style.css" />
+    <link rel="stylesheet" href="css/shop.css">
 </head>
 
 <body class="bg-background text-foreground font-sans min-h-screen">
@@ -43,8 +44,8 @@
     <!-- MENU -->
     <nav class="border-b border-border bg-background/95 backdrop-blur-md sticky top-0 z-50">
         <div class="max-w-6xl mx-auto px-6 h-[60px] flex items-center justify-between">
-            <a href="/" class="inline-flex items-center text-foreground transition-opacity hover:opacity-90">
-                <img src="/img/logo-header.svg" alt="Âmbar" class="h-12 w-auto" />
+            <a href="index.html" class="inline-flex items-center text-foreground transition-opacity hover:opacity-90">
+                <img src="img/logo-header.svg" alt="Âmbar" class="h-12 w-auto" />
             </a>
             <div class="flex items-center gap-8">
                 <a href="https://wa.me/5521967453706?text=Ol%C3%A1%2C%20vim%20pelo%20site%20e%20gostaria%20de%20receber%20mais%20informa%C3%A7%C3%B5es%20sobre%20a%20%C3%82mbar%20Bot%C3%A2nicos."
@@ -57,13 +58,15 @@
     </nav>
 
     <!-- TOPO DO PRODUTO (dinâmico) -->
-    <section class="max-w-6xl mx-auto px-6 py-14 grid grid-cols-1 md:grid-cols-2 gap-14 items-start">
+    <section class="max-w-6xl mx-auto px-6 py-14">
+        <div id="product-overview">
         <div class="h-[440px] rounded-sm overflow-hidden bg-secondary">
             <img id="prod-img" src="" alt="" class="w-full h-full object-cover" loading="lazy" />
         </div>
         <div class="pt-2">
             <h1 id="prod-nome" class="font-sans text-5xl font-semibold leading-none mb-4">Carregando...</h1>
             <p id="prod-descricao-curta" class="text-sm leading-relaxed mb-8 max-w-sm"></p>
+            <div id="product-purchase"></div>
             <a href="https://wa.me/5521967453706?text=Ol%C3%A1%2C%20gostaria%20de%20solicitar%20um%20or%C3%A7amento%20pelo%20site%20%C3%82mbar%20Bot%C3%A2nicos."
                 target="_blank" rel="noopener noreferrer"
                 class="inline-flex items-center gap-2 text-sm font-medium bg-foreground text-primary-foreground px-5 py-2.5 rounded-sm hover:opacity-80 transition-opacity">Solicitar
@@ -72,6 +75,7 @@
                     <path d="M5 12h14" />
                     <path d="m12 5 7 7-7 7" />
                 </svg></a>
+        </div>
         </div>
     </section>
 
@@ -130,8 +134,9 @@
 
     <!-- SUPABASE + RADAR + DADOS DO PRODUTO -->
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-    <script src="/js/script.js"></script>
-    <script src="/js/produto.js"></script>
+    <script src="js/script.js"></script>
+    <script src="js/shop.js"></script>
+    <script src="js/produto.js"></script>
 </body>
 
 </html>

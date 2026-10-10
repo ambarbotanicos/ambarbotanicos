@@ -11,10 +11,7 @@ var db = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
 // UTILIDADE: Sanitizar texto para prevenir XSS
 // ============================================================
 function sanitize(str) {
-    if (!str) return '';
-    const div = document.createElement('div');
-    div.textContent = str;
-    return div.innerHTML;
+    return String(str ?? '').replace(/[&<>"']/g, c => ({'&':'&amp;', '<':'&lt;', '>':'&gt;', '"':'&quot;', "'":'&#39;'}[c]));
 }
 
 // ============================================================
@@ -41,23 +38,9 @@ async function carregarProdutos(containerId, limite) {
         return;
     }
 
-    container.innerHTML = produtos.map(p => `
-        <a href="/produtos/${encodeURIComponent(p.id)}" class="cursor-pointer group bg-card border border-[rgba(42,37,32,0.14)] rounded-sm overflow-hidden hover:shadow-md transition-shadow duration-200">
-            <div class="h-44 overflow-hidden bg-[#DDD9CE]">
-                <img src="${sanitize(p.imagem_url)}" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" alt="${sanitize(p.nome)}" loading="lazy" />
-            </div>
-            <div class="p-4">
-                <p class="font-sans text-sm font-medium leading-snug group-hover:underline mb-1">${sanitize(p.nome)}</p>
-                <p class="text-[10px] font-mono uppercase tracking-widest text-[#7A7165] flex items-center gap-1">
-                    <svg xmlns="http://www.w3.org/2000/svg" width="9" height="9" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                        <path d="M20 10c0 6-8 12-8 12s-8-6-8-12a8 8 0 0 1 16 0Z"/>
-                        <circle cx="12" cy="10" r="3"/>
-                    </svg>
-                    ${sanitize(p.regiao)} · ${sanitize(p.tipo)}
-                </p>
-            </div>
-        </a>
-    `).join('');
+    Shop.cacheProducts(produtos);
+    container.replaceChildren(...produtos.map(p => Shop.card(p)));
+
 }
 
 // Inicializar ao carregar a página
