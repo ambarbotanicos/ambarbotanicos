@@ -78,8 +78,7 @@ const Shop = (() => {
         body.append(summary,details);
         const footer=document.createElement('footer');footer.className='drawer-footer';const subtotalEl=aside.querySelector('.cart-subtotal');subtotalEl.firstChild.textContent='Subtotal';
         const finalize=document.createElement('button');finalize.id='cart-finalize';finalize.type='button';finalize.className='shop-button';finalize.textContent='Finalizar compra';finalize.onclick=()=>openDrawer('checkout');
-        const full=document.createElement('button');full.type='button';full.className='cart-full';full.textContent='Ver carrinho completo';full.onclick=()=>{openDrawer('summary');body.scrollTop=0;};
-        footer.append(subtotalEl,aside.querySelector('#cart-freight'),finalize,full);aside.append(header,body,footer);document.body.append(backdrop,aside);
+        footer.append(subtotalEl,aside.querySelector('#cart-freight'),finalize);aside.append(header,body,footer);document.body.append(backdrop,aside);
         document.addEventListener('keydown',e=>{
             if(aside.hidden)return;
             if(e.key==='Escape'){e.preventDefault();closeDrawer();}
@@ -97,7 +96,7 @@ const Shop = (() => {
         aside.hidden=false;document.getElementById('cart-backdrop').hidden=false;document.body.classList.add('cart-open');
         document.querySelector('.cart-header')?.setAttribute('aria-expanded','true');
         const detail=step==='checkout';document.getElementById('cart-summary').hidden=detail;document.getElementById('cart-checkout').hidden=!detail;
-        document.getElementById('cart-finalize').hidden=detail;aside.querySelector('.cart-full').hidden=detail;
+        document.getElementById('cart-finalize').hidden=detail;
         document.getElementById('cart-title').textContent=detail?'Dados do pedido':'Seu carrinho';aside.querySelector('.drawer-body').scrollTop=0;
         (detail?aside.querySelector('#cart-checkout .cart-back'):aside.querySelector('#cart-close')).focus();
     }
