@@ -46,3 +46,6 @@
 @media(max-width:860px){.shop-grid{grid-template-columns:repeat(2,minmax(0,1fr))}#product-overview{grid-template-columns:1fr}}
 @media(max-width:520px){.shop-grid{grid-template-columns:1fr}.drawer-header{padding:20px}.drawer-body{padding:0 20px}.drawer-footer{padding:17px 20px 20px}.cart-drawer .drawer-header h2{font-size:18px}.cart-item-heading{font-size:14px}.cart-thumbnail{width:60px;height:60px}.cart-drawer .cart-item{gap:13px}}
 @media(prefers-reduced-motion:reduce){.cart-drawer:not([hidden]){animation:none}}
+
+/* Announcement above the storefront header. */
+.shipping-banner{display:flex;align-items:center;justify-content:center;gap:10px;width:100%;margin:0;padding:10px 16px;min-height:38px;background:#a44700;color:#fff;border:0;border-radius:0;font-size:14px;font-weight:500;line-height:1.4;text-align:center;text-transform:uppercase}.shipping-banner svg{flex-shrink:0}@media(max-width:520px){.shipping-banner{font-size:12px;padding:9px 12px;gap:8px}}

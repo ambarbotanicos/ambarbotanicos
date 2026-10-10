@@ -31,7 +31,7 @@ const Shop = (() => {
         if (hint) hint.textContent = freight();
         const finalize = document.getElementById('cart-finalize');
         if (finalize) finalize.disabled = !cart.length;
-        document.querySelectorAll('[data-shipping-banner]').forEach(el => el.textContent = `Pedidos acima de ${money(settings.freeShipping)}: condição de frete cortesia (sujeito à confirmação da região)`);
+        document.querySelectorAll('[data-shipping-banner]').forEach(el => el.textContent = `Frete grátis acima de ${money(settings.freeShipping)}`);
     }
     function toast(message) {
         let el = document.getElementById('shop-toast');
@@ -108,7 +108,7 @@ const Shop = (() => {
     function mount() {
         const grid = document.getElementById('grid-produtos-catalogo') || document.getElementById('product-overview');
         if (!grid) return;
-        const banner = document.createElement('p'); banner.className='shipping-banner'; banner.dataset.shippingBanner=''; grid.parentNode.insertBefore(banner,grid);
+        const banner = document.createElement('p'); banner.className='shipping-banner'; banner.title='Frete cortesia sujeito à confirmação da região'; banner.innerHTML='<svg aria-hidden="true" width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M3 6h11v11H3zM14 10h4l3 4v3h-7"/><circle cx="7" cy="18" r="2"/><circle cx="18" cy="18" r="2"/></svg><span data-shipping-banner></span>'; document.body.insertBefore(banner,document.querySelector('nav'));
         if (grid.id==='grid-produtos-catalogo') grid.className='shop-grid';
         const aside = document.createElement('aside'); aside.id='cart-panel'; aside.className='cart-panel'; aside.innerHTML=`<h2>Seu carrinho</h2><ul id="cart-items" aria-live="polite"></ul><div class="cart-subtotal">Subtotal dos produtos <strong id="cart-total"></strong></div><p id="cart-freight" class="freight-hint" aria-live="polite"></p><h3>Dados para o pedido</h3><div class="buyer-toggle"><button type="button" data-buyer="pf" aria-pressed="true">Pessoa Física (CPF)</button><button type="button" data-buyer="pj" aria-pressed="false">Pessoa Jurídica (CNPJ)</button></div><form id="checkout-form"><fieldset data-fields="pf">${field('name','Nome completo',120)}${field('cpf','CPF',14)}${field('phone','Telefone / WhatsApp',15,true,'tel')}${field('email','E-mail',254,false,'email')}</fieldset><fieldset data-fields="pj" hidden disabled>${field('cnpj','CNPJ completo',18)}${field('legalName','Nome do Estabelecimento (Razão Social)',150)}${field('tradeName','Nome Fantasia',120)}${field('ie','Inscrição Estadual (IE)',30)}${field('businessEmail','E-mail Comercial',254,true,'email')}${field('businessPhone','Telefone / WhatsApp da empresa',15,true,'tel')}</fieldset><fieldset><legend>Endereço de entrega</legend>${field('cep','CEP',9)}<p id="cep-feedback" role="status"></p>${field('address','Endereço (Rua e número)',180)}${field('complement','Complemento',100,false)}${field('district','Bairro',90)}${field('city','Cidade',100,true,'text','Rio de Janeiro')}${field('state','UF',2,true,'text','RJ')}<label>Observações<textarea name="notes" maxlength="500" rows="3" placeholder="Instruções de entrega, horário..."></textarea></label></fieldset><p id="checkout-error" role="alert"></p><button type="submit" class="shop-button">Enviar pedido pelo WhatsApp</button></form>`; setupDrawer(aside);
         const nav = document.querySelector('nav > div > div');
