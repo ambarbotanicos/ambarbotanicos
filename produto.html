@@ -36,7 +36,7 @@
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="js/tailwind.config.js"></script>
     <link rel="stylesheet" href="css/style.css" />
-    <link rel="stylesheet" href="css/shop.css">
+    <link rel="stylesheet" href="css/shop.css?v=usos-1">
 </head>
 
 <body class="bg-background text-foreground font-sans min-h-screen">
@@ -65,6 +65,14 @@
             <div id="product-purchase"></div>
 
         </div>
+        </div>
+    </section>
+
+    <section id="guia-usos" class="product-usage" hidden aria-labelledby="usage-heading">
+        <div class="max-w-6xl mx-auto px-6 py-12">
+            <p class="text-[10px] font-mono uppercase tracking-widest text-muted-foreground mb-3">Na cozinha e no bar</p>
+            <h2 id="usage-heading" class="text-2xl font-medium mb-5">Guia de usos</h2>
+            <div id="product-usage-text" class="usage-content"></div>
         </div>
     </section>
 
@@ -124,8 +132,8 @@
     <!-- SUPABASE + RADAR + DADOS DO PRODUTO -->
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
     <script src="js/script.js"></script>
-    <script src="js/shop.js"></script>
-    <script src="js/produto.js"></script>
+    <script src="js/shop.js?v=usos-1"></script>
+    <script src="js/produto.js?v=usos-1"></script>
 </body>
 
 </html>

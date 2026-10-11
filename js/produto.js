@@ -154,10 +154,21 @@ document.addEventListener('DOMContentLoaded', async () => {
             fichaLinha('Produtor / Coletor', p.produtor);
     }
 
-    fichaHtml += fichaLinha('Tipo', p.tipo) +
-        fichaLinha('Dicas de uso', p.dicas_uso);
+    fichaHtml += fichaLinha('Tipo', p.tipo);
 
     document.getElementById('ficha-body').innerHTML = fichaHtml;
+
+    const usageSection=document.getElementById('guia-usos');
+    const usageText=String(p.dicas_uso || '').trim();
+    if(usageSection && usageText){
+        const content=document.getElementById('product-usage-text');
+        content.replaceChildren(...usageText.split(/\n\s*\n/).filter(Boolean).map(text=>{
+            const paragraph=document.createElement('p');paragraph.textContent=text;return paragraph;
+        }));
+        usageSection.hidden=false;
+        if(location.hash === "#guia-usos") requestAnimationFrame(()=>usageSection.scrollIntoView({block:"start"}));
+    }
+
 
     // --- Descrição sensorial ---
     if (p.descricao) {

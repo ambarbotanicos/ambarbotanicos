@@ -67,7 +67,7 @@
             border-radius: 4px;
         }
     </style>
-    <link rel="stylesheet" href="css/shop.css">
+    <link rel="stylesheet" href="css/shop.css?v=usos-1">
 </head>
 
 <body class="text-foreground font-sans min-h-screen pb-20">
@@ -156,10 +156,12 @@
                 </div>
 
                 <div class="mb-8 border-b border-[rgba(0,0,0,0.08)] pb-8">
-                    <label class="block text-sm font-medium mb-1.5 text-foreground/90">Dica de uso</label>
-                    <textarea id="dicas_uso" rows="4" placeholder="Descricao"
+                    <label class="block text-sm font-medium mb-1.5 text-foreground/90" for="dicas_uso">Guia de usos</label>
+                    <textarea id="dicas_uso" rows="6" aria-describedby="usage-admin-help" placeholder="Explique como usar o ingrediente na cozinha ou no bar. Separe as sugestões por parágrafos."
                         class="w-full p-3 text-sm border border-[rgba(0,0,0,0.08)] rounded-[3px] bg-[#FAFAFA] resize-none focus:outline-none focus:border-gray-300"></textarea>
                 </div>
+
+                <p id="usage-admin-help" class="text-xs text-muted-foreground mb-8">Este texto aparece na página do produto e na prévia ao passar o mouse ou tocar em “Guia de usos” na vitrine.</p>
 
                 <div class="mb-8 border-b border-[rgba(0,0,0,0.08)] pb-8">
                     <h2 class="font-medium text-lg mb-4 text-foreground">Parceiros</h2>
@@ -287,7 +289,7 @@
 
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
     <script src="js/script.js"></script>
-    <script src="js/shop.js"></script>
+    <script src="js/shop.js?v=usos-1"></script>
     <script src="js/admin.js"></script>
     <script src="js/shop-admin.js"></script>
 </body>

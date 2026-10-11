@@ -7,7 +7,7 @@ const Shop = (() => {
     const save = (key, value) => { try { localStorage.setItem(key, JSON.stringify(value)); } catch { /* Storage may be disabled. */ } };
     const validPrice = value => value !== null && value !== '' && Number.isFinite(Number(value)) && Number(value) >= 0;
     const image = value => { if (typeof value !== 'string' || !value.trim()) return ''; try { const u = new URL(value, location.href); return ['http:', 'https:'].includes(u.protocol) ? u.href : ''; } catch { return ''; } };
-    const normalize = p => ({ id: String(p.id), name: p.nome ?? p.name ?? '', description: p.descricao_curta ?? p.description ?? '', image: image(p.imagem_url ?? p.image), price: validPrice(p.preco ?? p.price) ? Number(p.preco ?? p.price) : null, hasVariations: Boolean(p.tem_variacoes ?? p.hasVariations), variations: Array.isArray(p.variacoes ?? p.variations) ? (p.variacoes ?? p.variations).filter(v => v.id && v.weight && validPrice(v.price)).map(v => ({id: String(v.id), weight: String(v.weight), price: Number(v.price), image:image(v.image)})) : [] });
+    const normalize = p => ({ id: String(p.id), name: p.nome ?? p.name ?? '', description: p.descricao_curta ?? p.description ?? '', usage: String(p.dicas_uso ?? p.usage ?? '').trim(), image: image(p.imagem_url ?? p.image), price: validPrice(p.preco ?? p.price) ? Number(p.preco ?? p.price) : null, hasVariations: Boolean(p.tem_variacoes ?? p.hasVariations), variations: Array.isArray(p.variacoes ?? p.variations) ? (p.variacoes ?? p.variations).filter(v => v.id && v.weight && validPrice(v.price)).map(v => ({id: String(v.id), weight: String(v.weight), price: Number(v.price), image:image(v.image)})) : [] });
     const cachedSettings = read('shop-settings-v2', {});
     let settings = { whatsapp: typeof cachedSettings.whatsapp === 'string' ? cachedSettings.whatsapp : '5521967453706', freeShipping: validPrice(cachedSettings.freeShipping) ? Number(cachedSettings.freeShipping) : 150 };
     let settingsReady;
@@ -62,7 +62,19 @@ const Shop = (() => {
     function card(raw) {
         const p = normalize(raw);
         const article = document.createElement('article'); article.className='shop-card';
-        article.innerHTML = `<a href="produto.html?id=${encodeURIComponent(p.id)}"><div class="shop-image">${p.image ? `<img src="${escape(p.image)}" alt="${escape(p.name)}" loading="lazy">` : ''}</div><h2>${escape(p.name)}</h2></a><p>${escape(p.description)}</p>`;
+        const url = `produto.html?id=${encodeURIComponent(p.id)}`;
+        article.innerHTML = `<div class="shop-card-media"><a href="${url}"><div class="shop-image">${p.image ? `<img src="${escape(p.image)}" alt="${escape(p.name)}" loading="lazy">` : ''}</div></a>${p.usage ? `<button type="button" class="usage-toggle" aria-expanded="false" aria-controls="usage-${escape(p.id)}">Guia de usos</button><div id="usage-${escape(p.id)}" class="usage-preview" hidden><h3>Guia de usos</h3><p>${escape(p.usage)}</p><a href="${url}#guia-usos">Ver guia completo →</a></div>` : ''}</div><h2><a href="${url}">${escape(p.name)}</a></h2><p>${escape(p.description)}</p>`;
+        const media=article.querySelector('.shop-card-media'), toggle=article.querySelector('.usage-toggle'), preview=article.querySelector('.usage-preview');
+        if(toggle){
+            let pinned=false;
+            const show=open=>{preview.hidden=!open;toggle.setAttribute('aria-expanded',String(open));};
+            media.addEventListener('pointerenter',()=>{if(matchMedia('(hover: hover)').matches)show(true);});
+            media.addEventListener('pointerleave',()=>{if(!pinned&&!media.contains(document.activeElement))show(false);});
+            media.addEventListener('focusin',()=>show(true));
+            media.addEventListener('focusout',event=>{if(!pinned&&!media.contains(event.relatedTarget))show(false);});
+            toggle.addEventListener('click',()=>{pinned=!pinned;show(pinned);});
+            media.addEventListener('keydown',event=>{if(event.key==='Escape'){event.preventDefault();pinned=false;toggle.focus();show(false);}});
+        }
         article.append(purchase(p,article.querySelector('.shop-image img'))); return article;
     }
     const field = (name,label,max,required=true,type='text',value='') => `<label>${label}<input name="${name}" type="${type}" maxlength="${max}" ${required?'required':''} value="${escape(value)}"></label>`;
