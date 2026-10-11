@@ -3,13 +3,15 @@ document.addEventListener('DOMContentLoaded',async()=>{
     try{
         const {data,error}=await db.from('produtos').select('id,nome,produtor,parceiros').order('nome');if(error)throw error;
         const entries=new Map();
+        const excluded=new Set((list.dataset.exclude||'').split(',').map(name=>name.trim().toLocaleLowerCase('pt-BR')).filter(Boolean));
         for(const product of data||[]){
             let values=[];
             if(list.dataset.kind==='producers')values=String(product.produtor||'').split('|').map(text=>({name:text.trim(),image:''})).filter(v=>v.name&&!v.name.startsWith('('));
             else{let partners=product.parceiros;try{if(typeof partners==='string')partners=JSON.parse(partners);}catch{partners=[];}if(Array.isArray(partners))values=partners.filter(v=>v&&typeof v.nome==='string'&&v.nome.trim()).map(v=>({name:v.nome.trim(),image:Shop.image(v.icone)}));}
-            for(const value of values){const key=value.name.toLocaleLowerCase('pt-BR');if(!entries.has(key))entries.set(key,{...value,products:new Map()});const entry=entries.get(key);if(!entry.image&&value.image)entry.image=value.image;entry.products.set(product.id,product);}
+            for(const value of values){const key=value.name.toLocaleLowerCase('pt-BR');if(excluded.has(key))continue;if(!entries.has(key))entries.set(key,{...value,products:new Map()});const entry=entries.get(key);if(!entry.image&&value.image)entry.image=value.image;entry.products.set(product.id,product);}
         }
         list.replaceChildren();
+        const extraSection=list.closest('[data-other-partners]');if(extraSection){extraSection.hidden=!entries.size;if(!entries.size)return;}
         for(const entry of entries.values()){
             const card=document.createElement('article');card.className='bg-card border border-border rounded-sm p-6';
             if(entry.image){const img=document.createElement('img');img.src=entry.image;img.alt=entry.name;img.loading='lazy';img.className='w-24 h-24 object-contain mb-5';card.append(img);}
