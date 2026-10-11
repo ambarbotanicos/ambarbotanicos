@@ -59,11 +59,34 @@ const Shop = (() => {
         }
         const button = document.createElement('button'); button.type='button'; button.className='shop-button'; button.textContent='Adicionar'; button.disabled=p.hasVariations ? !selected : !validPrice(p.price); button.onclick=() => add(p,selected); wrap.append(button); update(); return wrap;
     }
+    function usageMarkup(value) {
+        const references={
+            'mimo café':'guia-mimo.html', 'mimo':'guia-mimo.html',
+            'iced latte':'guia-mimo.html#iced-latte',
+            '111 music bar':'guia-111-music-bar.html',
+            'dois mundos':'guia-111-music-bar.html#dois-mundos',
+            'pindorama punch':'guia-111-music-bar.html#pindorama-punch',
+            'mix nuts':'guia-111-music-bar.html#mix-nuts',
+            'picco':'guia-picco.html', '777':'guia-picco.html#777',
+            'chai latte':'guia-picco.html#chai-latte',
+            'lab cup':'guia-lab-cup.html', 'volante café':'guia-volante.html',
+            'aruna café':'guia-aruna.html', 'mato café':'guia-mato.html',
+            'guia âmbar':'quem-acredita.html'
+        };
+        const pattern=/(?<![\p{L}\p{N}])(?:111 Music Bar|Pindorama Punch|Volante Café|Guia Âmbar|Dois Mundos|Chai Latte|Iced latte|Aruna Café|Mimo Café|Mato Café|Mix Nuts|Lab Cup|Picco|Mimo|777)(?![\p{L}\p{N}])/giu;
+        const text=String(value ?? '');let result='',cursor=0;
+        for(const match of text.matchAll(pattern)){
+            result+=escape(text.slice(cursor,match.index));
+            result+=`<a class="usage-reference" href="${references[match[0].toLocaleLowerCase('pt-BR')]}"><em>${escape(match[0])}</em></a>`;
+            cursor=match.index+match[0].length;
+        }
+        return result+escape(text.slice(cursor));
+    }
     function card(raw) {
         const p = normalize(raw);
         const article = document.createElement('article'); article.className='shop-card';
         const url = `produto.html?id=${encodeURIComponent(p.id)}`;
-        article.innerHTML = `<div class="shop-card-media"><a href="${url}"><div class="shop-image">${p.image ? `<img src="${escape(p.image)}" alt="${escape(p.name)}" loading="lazy">` : ''}</div></a>${p.usage ? `<button type="button" class="usage-toggle" aria-expanded="false" aria-controls="usage-${escape(p.id)}">Guia de usos</button><div id="usage-${escape(p.id)}" class="usage-preview" hidden><h3>Guia de usos</h3><p>${escape(p.usage)}</p><a href="${url}#guia-usos">Ver guia completo →</a></div>` : ''}</div><h2><a href="${url}">${escape(p.name)}</a></h2><p>${escape(p.description)}</p>`;
+        article.innerHTML = `<div class="shop-card-media"><a href="${url}"><div class="shop-image">${p.image ? `<img src="${escape(p.image)}" alt="${escape(p.name)}" loading="lazy">` : ''}</div></a>${p.usage ? `<button type="button" class="usage-toggle" aria-expanded="false" aria-controls="usage-${escape(p.id)}">Guia de usos</button><div id="usage-${escape(p.id)}" class="usage-preview" hidden><h3>Guia de usos</h3><p>${usageMarkup(p.usage)}</p><a href="${url}#guia-usos">Ver guia completo →</a></div>` : ''}</div><h2><a href="${url}">${escape(p.name)}</a></h2><p>${escape(p.description)}</p>`;
         const media=article.querySelector('.shop-card-media'), toggle=article.querySelector('.usage-toggle'), preview=article.querySelector('.usage-preview');
         if(toggle){
             let pinned=false;
@@ -214,5 +237,5 @@ const Shop = (() => {
     }
     document.addEventListener('DOMContentLoaded',()=>{mount();settingsReady=loadSettings();});
     window.addEventListener('storage',e=>{if(e.key===buyerStorageKey&&!e.newValue&&checkout){setRememberChoice(false);rememberStatus('Dados salvos apagados em outra aba.');}if(e.key==='cart-v2'){const saved=read('cart-v2',[]);cart=Array.isArray(saved)?saved.filter(i=>i&&typeof i.key==='string'&&typeof i.name==='string'&&validPrice(i.price)&&Number.isInteger(i.quantity)&&i.quantity>0):[];renderCart();}});
-    return {money,escape,image,normalize,card,purchase,maskCpf,maskCnpj,maskPhone,maskCep,message,validPrice,loadSettings,getSettings:()=>settings,saveSettings(value){settings=value;save('shop-settings-v2',value);renderCart();},cacheProducts(products){save('products-v2',products);},settingsReady:()=>settingsReady};
+    return {money,escape,image,normalize,usageMarkup,card,purchase,maskCpf,maskCnpj,maskPhone,maskCep,message,validPrice,loadSettings,getSettings:()=>settings,saveSettings(value){settings=value;save('shop-settings-v2',value);renderCart();},cacheProducts(products){save('products-v2',products);},settingsReady:()=>settingsReady};
 })();

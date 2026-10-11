@@ -163,7 +163,7 @@ document.addEventListener('DOMContentLoaded', async () => {
     if(usageSection && usageText){
         const content=document.getElementById('product-usage-text');
         content.replaceChildren(...usageText.split(/\n\s*\n/).filter(Boolean).map(text=>{
-            const paragraph=document.createElement('p');paragraph.textContent=text;return paragraph;
+            const paragraph=document.createElement('p');paragraph.innerHTML=Shop.usageMarkup(text);return paragraph;
         }));
         usageSection.hidden=false;
         if(location.hash === "#guia-usos") requestAnimationFrame(()=>usageSection.scrollIntoView({block:"start"}));
