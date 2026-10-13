@@ -134,6 +134,14 @@ document.addEventListener('DOMContentLoaded', async () => {
         document.getElementById('prod-descricao-curta').textContent = '';
     }
 
+    const sensorySummary=document.getElementById('prod-sensorial-resumo');
+    const sensoryNotes=Shop.sensory(p);
+    if(sensorySummary && sensoryNotes.length){
+        const label=document.createElement('span');label.textContent='Sensorial:';
+        sensorySummary.replaceChildren(label,document.createTextNode(' '+sensoryNotes.join(' · ')));
+        sensorySummary.hidden=false;
+    }
+
     // --- Ficha técnica ---
     let fichaHtml = fichaLinha('Produto', p.nome) +
         fichaLinha('Nome científico', p.nome_cientifico, true);
